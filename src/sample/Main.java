@@ -1,17 +1,22 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Math.random;
 
@@ -22,10 +27,10 @@ public class Main extends Application {
     private static final Color cellColor = Color.BLACK;
     private static final int sceneWidth = 1000;
     private static final int sceneHeight = 1000;
-    private static final int sceneCellHeight = 10;
     private static final int sceneCellWidth = 10;
+    private static final int sceneCellHeight = 10;
     private Group sceneCells;
-    private LinkedList<Rectangle> cells = new LinkedList<>();
+    private LinkedList<Shape> cells = new LinkedList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -37,7 +42,7 @@ public class Main extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.A) {
-                    placeCell(random() * 20, random() * 20);
+                    placeCell(random() * sceneWidth / sceneCellHeight, random() * sceneHeight / sceneCellHeight);
                 }
 
                 if (event.getCode() == KeyCode.R) {
@@ -46,6 +51,20 @@ public class Main extends Application {
                         cells.removeLast();
                     }
                 }
+
+                if (event.getCode() == KeyCode.T) {
+                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> {
+                                placeCell(random() * sceneWidth / sceneCellHeight, random() * sceneHeight / sceneCellHeight);
+                            });
+
+
+                        }
+                    }, 1000, 100);
+                }
+
             }
         });
 
@@ -72,6 +91,7 @@ public class Main extends Application {
         root.getChildren().add(sceneCells);
 
         primaryStage.show();
+
     }
 
     private void placeCell(double x, double y) {
@@ -79,10 +99,13 @@ public class Main extends Application {
     }
 
     private void placeCell(int x, int y) {
-        Rectangle rectangle = new Rectangle(x * sceneCellWidth + 0.5, y * sceneCellHeight + 0.5, sceneCellWidth - 1, sceneCellHeight - 1);
-        rectangle.setFill(cellColor);
-        sceneCells.getChildren().add(rectangle);
-        cells.add(rectangle);
+        System.out.printf("x=%-2s, y=%-2s\n",x,y);
+        Shape cell;
+//        cell = new Rectangle(x * sceneCellWidth + 0.5, y * sceneCellHeight + 0.5, sceneCellWidth - 1, sceneCellHeight - 1);
+//        cell.setFill(cellColor);
+        cell = new Circle(x * sceneCellWidth + sceneCellWidth/2, y * sceneCellHeight + sceneCellHeight/2, sceneCellWidth/2, cellColor);
+        sceneCells.getChildren().add(cell);
+        cells.add(cell);
     }
 
 
