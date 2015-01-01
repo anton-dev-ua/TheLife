@@ -4,11 +4,14 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
+import java.util.LinkedList;
 
 import static java.lang.Math.random;
 
@@ -21,19 +24,28 @@ public class Main extends Application {
     private static final int sceneHeight = 1000;
     private static final int sceneCellHeight = 10;
     private static final int sceneCellWidth = 10;
-    private Group cells;
+    private Group sceneCells;
+    private LinkedList<Rectangle> cells = new LinkedList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Group root = new Group();
         primaryStage.setTitle("Hello World");
-        Scene scene = new Scene(root, 1000, 1000, background);
+        Scene scene = new Scene(root, sceneWidth, sceneHeight, background);
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                System.out.println(event);
-                placeCell(random() * 20, random() * 20);
+                if (event.getCode() == KeyCode.A) {
+                    placeCell(random() * 20, random() * 20);
+                }
+
+                if (event.getCode() == KeyCode.R) {
+                    if (cells.size() > 0) {
+                        sceneCells.getChildren().remove(cells.getLast());
+                        cells.removeLast();
+                    }
+                }
             }
         });
 
@@ -56,9 +68,8 @@ public class Main extends Application {
         root.getChildren().add(lines);
 
 
-        cells = new Group();
-        placeCell(45, 45);
-        root.getChildren().add(cells);
+        sceneCells = new Group();
+        root.getChildren().add(sceneCells);
 
         primaryStage.show();
     }
@@ -70,7 +81,8 @@ public class Main extends Application {
     private void placeCell(int x, int y) {
         Rectangle rectangle = new Rectangle(x * sceneCellWidth + 0.5, y * sceneCellHeight + 0.5, sceneCellWidth - 1, sceneCellHeight - 1);
         rectangle.setFill(cellColor);
-        cells.getChildren().add(rectangle);
+        sceneCells.getChildren().add(rectangle);
+        cells.add(rectangle);
     }
 
 
