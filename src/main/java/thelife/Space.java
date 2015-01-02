@@ -11,7 +11,7 @@ public class Space {
         field.put(new CellKey(x, y), true);
     }
 
-    public boolean isAliveAt(int x, int y) {
+    public boolean isLifeAt(int x, int y) {
         return field.get(new CellKey(x, y)) == Boolean.TRUE;
     }
 
@@ -20,12 +20,16 @@ public class Space {
         int neighborsCount = 0;
         for (int xNeighbor = -1; xNeighbor <= 1; xNeighbor++) {
             for (int yNeighbor = -1; yNeighbor <= 1; yNeighbor++) {
-                if ((xNeighbor != 0 || yNeighbor != 0) && isAliveAt(x + xNeighbor, y + yNeighbor)) {
+                if ((xNeighbor != 0 || yNeighbor != 0) && isLifeAt(x + xNeighbor, y + yNeighbor)) {
                     neighborsCount++;
                 }
             }
         }
         return neighborsCount;
+    }
+
+    public void removeLifeAt(int x, int y) {
+        field.remove(new CellKey(x, y));
     }
 
     static class CellKey {

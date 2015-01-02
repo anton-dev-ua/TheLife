@@ -17,14 +17,22 @@ public class SpaceTest {
 
     @Test
     public void noLifeByDefaultInTheCell() {
-        assertThat(space.isAliveAt(4, 5), is(false));
+        assertThat(space.isLifeAt(4, 5), is(false));
     }
 
     @Test
     public void keepsStateOfTheCell() {
         space.setLifeAt(2, 3);
 
-        assertThat(space.isAliveAt(2, 3), is(true));
+        assertThat(space.isLifeAt(2, 3), is(true));
+    }
+
+    @Test
+    public void removesLife() {
+        space.setLifeAt(2, 3);
+        space.removeLifeAt(2, 3);
+
+        assertThat(space.isLifeAt(2, 3), is(false));
     }
 
     @Test
