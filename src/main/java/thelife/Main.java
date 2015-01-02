@@ -13,11 +13,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-
-import static java.lang.Math.random;
 
 public class Main extends Application {
 
@@ -28,11 +25,11 @@ public class Main extends Application {
     private static final int sceneHeight = 1000;
     private static final int sceneCellWidth = 10;
     private static final int sceneCellHeight = 10;
+
+
     private Group sceneCells;
-    private LinkedList<Shape> cells = new LinkedList<>();
     private World world;
     private Space space;
-    private long delayTime = 100;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,74 +37,65 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         Scene scene = new Scene(root, sceneWidth, sceneHeight, background);
 
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.A) {
-                    placeCell(random() * sceneWidth / sceneCellHeight, random() * sceneHeight / sceneCellHeight);
-                }
-
-                if (event.getCode() == KeyCode.R) {
-                    if (cells.size() > 0) {
-                        sceneCells.getChildren().remove(cells.getLast());
-                        cells.removeLast();
-                    }
-                }
-
-                if (event.getCode() == KeyCode.T) {
-
-
-                    new Thread(() -> {
-
-                        long veryStartTime = System.currentTimeMillis();
-                        int iterations = 0;
-
-                        while (true) {
-
-                            long startTime = System.currentTimeMillis();
-
-                            world.nextGeneration();
-
-                            final CountDownLatch countDownLatch = new CountDownLatch(1);
-
-                            Platform.runLater(() -> {
-                                displayLife();
-                                countDownLatch.countDown();
-                            });
-
-                            try {
-                                countDownLatch.await();
-                                long spentTime = System.currentTimeMillis() - startTime;
-                                if (spentTime < delayTime) {
-                                    Thread.sleep(delayTime - spentTime);
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                            iterations++;
-
-                            long totalSpentTime = System.currentTimeMillis() - veryStartTime;
-                            if (iterations % 25 == 0 && totalSpentTime > 0) {
-                                System.out.printf("FPS: %5.1f\n", (((double) iterations / (double) totalSpentTime) * 1000));
-                            }
-
-                            if(totalSpentTime > 5 * 1000){
-                                iterations=0;
-                                veryStartTime = System.currentTimeMillis();
-                            }
-                        }
-
-                    }).start();
-
-                }
-
-            }
-        });
+        initKeyEvenets(scene);
 
         primaryStage.setScene(scene);
 
+        Group lines = drawGrid();
+        root.getChildren().add(lines);
 
+        sceneCells = new Group();
+        root.getChildren().add(sceneCells);
+
+        initWorld();
+
+        displayLife();
+
+        primaryStage.show();
+
+    }
+
+    private void initKeyEvenets(Scene scene) {
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+
+                if (event.getCode() == KeyCode.T) {
+
+                    new Thread(() -> {
+                        FpsCalculator fpsCalculator = new FpsCalculator();
+                        fpsCalculator.beforeProcess();
+
+                        Delayer delayer = new Delayer();
+                        delayer.beforeProcess();
+
+                        while (true) {
+                            world.nextGeneration();
+
+                            redraw();
+
+                            delayer.delayIteration();
+                            fpsCalculator.calculateFrames();
+                        }
+
+                    }).start();
+                }
+            }
+        });
+    }
+
+    private void initWorld() {
+        space = new Space();
+        space.setLifeAt(50, 50);
+        space.setLifeAt(51, 50);
+        space.setLifeAt(50, 51);
+        space.setLifeAt(49, 51);
+        space.setLifeAt(50, 52);
+
+        world = new World(space);
+    }
+
+    private Group drawGrid() {
         Group lines = new Group();
         for (int i = 0; i < sceneHeight; i++) {
             Line line = new Line(0, i * sceneCellHeight, sceneWidth, i * sceneCellHeight);
@@ -121,27 +109,20 @@ public class Main extends Application {
             line.setStrokeWidth(0.5);
             lines.getChildren().add(line);
         }
-        root.getChildren().add(lines);
+        return lines;
+    }
 
-
-        sceneCells = new Group();
-        root.getChildren().add(sceneCells);
-
-
-        space = new Space();
-
-        space.setLifeAt(50, 50);
-        space.setLifeAt(51, 50);
-        space.setLifeAt(50, 51);
-        space.setLifeAt(49, 51);
-        space.setLifeAt(50, 52);
-
-        world = new World(space);
-
-        displayLife();
-
-        primaryStage.show();
-
+    private void redraw() {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            displayLife();
+            countDownLatch.countDown();
+        });
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void displayLife() {
