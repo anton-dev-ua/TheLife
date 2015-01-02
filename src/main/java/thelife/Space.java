@@ -4,82 +4,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static thelife.Utils.aNeighborPoints;
+
 public class Space {
 
-    private Map<CellKey, Boolean> field = new HashMap<>();
+    private Map<Point, Boolean> field = new HashMap<>();
 
     public void setLifeAt(int x, int y) {
-        field.put(new CellKey(x, y), true);
+        field.put(new Point(x, y), true);
     }
 
-    public boolean isLifeAt(int x, int y) {
-        return field.get(new CellKey(x, y)) == Boolean.TRUE;
+    public boolean isLifeAt(Point point) {
+        return field.get(point) == Boolean.TRUE;
     }
 
-    public int getAliveNeighborsCountAt(int x, int y) {
-
-        int neighborsCount = 0;
-        for (int xNeighbor = -1; xNeighbor <= 1; xNeighbor++) {
-            for (int yNeighbor = -1; yNeighbor <= 1; yNeighbor++) {
-                if ((xNeighbor != 0 || yNeighbor != 0) && isLifeAt(x + xNeighbor, y + yNeighbor)) {
-                    neighborsCount++;
-                }
-            }
-        }
-        return neighborsCount;
+    public int getAliveNeighborsCountAt(Point point) {
+        return aNeighborPoints().stream().mapToInt((neighbor) -> isLifeAt(point.add(neighbor)) ? 1 : 0).sum();
     }
 
     public void removeLifeAt(int x, int y) {
-        field.remove(new CellKey(x, y));
+        field.remove(new Point(x, y));
     }
 
-    public Set<CellKey> getAllAliveCells() {
+    public Set<Point> getAllAliveCells() {
         return field.keySet();
     }
 
-    static class CellKey {
-        int x;
-        int y;
-
-        public CellKey(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CellKey)) return false;
-
-            CellKey cellKey = (CellKey) o;
-
-            if (x != cellKey.x) return false;
-            if (y != cellKey.y) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = x;
-            result = 31 * result + y;
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-    }
 }

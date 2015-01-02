@@ -3,6 +3,8 @@ package thelife;
 import java.util.HashSet;
 import java.util.Set;
 
+import static thelife.Utils.aNeighborPoints;
+
 public class World {
     private Space space;
     int generation = 0;
@@ -13,14 +15,14 @@ public class World {
     }
 
     public void nextGeneration() {
-        Set<Space.CellKey> toBorn = findCellsToBorn();
-        Set<Space.CellKey> toDie = findCellsToDie();
+        Set<Point> toBorn = findCellsToBorn();
+        Set<Point> toDie = findCellsToDie();
 
-        for (Space.CellKey cellKey : toBorn) {
+        for (Point cellKey : toBorn) {
             space.setLifeAt(cellKey.getX(), cellKey.getY());
         }
 
-        for(Space.CellKey cellKey: toDie) {
+        for (Point cellKey : toDie) {
             space.removeLifeAt(cellKey.getX(), cellKey.getY());
         }
 
@@ -28,38 +30,33 @@ public class World {
 
     }
 
-    private Set<Space.CellKey> findCellsToDie() {
-        Set<Space.CellKey> allAliveCells = space.getAllAliveCells();
+    private Set<Point> findCellsToDie() {
+        Set<Point> toDie = new HashSet<>();
 
-        Set<Space.CellKey> toDie = new HashSet<>();
-
-        for (Space.CellKey cellKey: allAliveCells) {
-            int aliveNeighbors = space.getAliveNeighborsCountAt(cellKey.getX(), cellKey.getY());
-            if(aliveNeighbors != 2 && aliveNeighbors !=3) {
-                toDie.add(cellKey);
+        for (Point point : space.getAllAliveCells()) {
+            int aliveNeighbors = space.getAliveNeighborsCountAt(point);
+            if (aliveNeighbors != 2 && aliveNeighbors != 3) {
+                toDie.add(point);
             }
         }
 
         return toDie;
     }
 
-    private Set<Space.CellKey> findCellsToBorn() {
-        Set<Space.CellKey> allAliveCells = space.getAllAliveCells();
+    private Set<Point> findCellsToBorn() {
+        Set<Point> toBorn = new HashSet<>();
 
-        Set<Space.CellKey> toBorn = new HashSet<>();
-
-        for (Space.CellKey cellKey : allAliveCells) {
-            for (int x = -1; x <= 1; x++) {
-                for (int y = -1; y <= 1; y++) {
-                    if (!space.isLifeAt(cellKey.getX() + x, cellKey.getY() + y)) {
-                        int aliveNeighbors = space.getAliveNeighborsCountAt(cellKey.getX() + x, cellKey.getY() + y);
-                        if (aliveNeighbors == 3) {
-                            toBorn.add(new Space.CellKey(cellKey.getX() + x, cellKey.getY() + y));
-                        }
+        for (Point point : space.getAllAliveCells()) {
+            aNeighborPoints().forEach((neighborDelta) -> {
+                Point neighbor = point.add(neighborDelta);
+                if (!space.isLifeAt(neighbor)) {
+                    if (3 == space.getAliveNeighborsCountAt(neighbor)) {
+                        toBorn.add(neighbor);
                     }
                 }
-            }
+            });
         }
+
         return toBorn;
     }
 }

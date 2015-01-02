@@ -89,7 +89,7 @@ public class Main extends Application {
 
                             long totalSpentTime = System.currentTimeMillis() - veryStartTime;
                             if (iterations % 25 == 0 && totalSpentTime > 0) {
-                                System.out.println("FPS: " + (int) (((double) iterations / (double) totalSpentTime) * 1000));
+                                System.out.printf("FPS: %5.1f\n", (((double) iterations / (double) totalSpentTime) * 1000));
                             }
 
                             if(totalSpentTime > 5 * 1000){
@@ -145,9 +145,9 @@ public class Main extends Application {
     }
 
     private void displayLife() {
-        Set<Space.CellKey> allAliveCells = space.getAllAliveCells();
+        Set<Point> allAliveCells = space.getAllAliveCells();
         sceneCells.getChildren().clear();
-        for (Space.CellKey cellKey : allAliveCells) {
+        for (Point cellKey : allAliveCells) {
             placeCell(cellKey.getX(), cellKey.getY());
         }
     }

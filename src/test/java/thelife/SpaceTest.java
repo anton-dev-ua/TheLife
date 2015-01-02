@@ -17,14 +17,14 @@ public class SpaceTest {
 
     @Test
     public void noLifeByDefaultInTheCell() {
-        assertThat(space.isLifeAt(4, 5), is(false));
+        assertThat(space.isLifeAt(new Point(4, 5)), is(false));
     }
 
     @Test
     public void keepsStateOfTheCell() {
         space.setLifeAt(2, 3);
 
-        assertThat(space.isLifeAt(2, 3), is(true));
+        assertThat(space.isLifeAt(new Point(2, 3)), is(true));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class SpaceTest {
         space.setLifeAt(2, 3);
         space.removeLifeAt(2, 3);
 
-        assertThat(space.isLifeAt(2, 3), is(false));
+        assertThat(space.isLifeAt(new Point(2, 3)), is(false));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class SpaceTest {
         space.setLifeAt(2, 4);
         space.setLifeAt(1, 3);
 
-        assertThat(space.getAliveNeighborsCountAt(1, 4), is(3));
+        assertThat(space.getAliveNeighborsCountAt(new Point(1, 4)), is(3));
     }
 
 }
