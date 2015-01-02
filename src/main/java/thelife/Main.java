@@ -1,4 +1,4 @@
-package sample;
+package thelife;
 
 import javafx.application.Application;
 import javafx.application.Platform;
