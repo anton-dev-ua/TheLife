@@ -43,4 +43,5 @@ public class SpaceTest {
 
         assertThat(space.getAliveNeighborsCountAt(1, 4), is(3));
     }
+
 }

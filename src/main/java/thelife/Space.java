@@ -2,6 +2,7 @@ package thelife;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Space {
 
@@ -32,6 +33,10 @@ public class Space {
         field.remove(new CellKey(x, y));
     }
 
+    public Set<CellKey> getAllAliveCells() {
+        return field.keySet();
+    }
+
     static class CellKey {
         int x;
         int y;
@@ -59,6 +64,22 @@ public class Space {
             int result = x;
             result = 31 * result + y;
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
         }
     }
 }
