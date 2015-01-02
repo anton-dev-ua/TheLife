@@ -15,6 +15,19 @@ public class Space {
         return field.get(new CellKey(x, y)) == Boolean.TRUE;
     }
 
+    public int getAliveNeighborsCountAt(int x, int y) {
+
+        int neighborsCount = 0;
+        for (int xNeighbor = -1; xNeighbor <= 1; xNeighbor++) {
+            for (int yNeighbor = -1; yNeighbor <= 1; yNeighbor++) {
+                if ((xNeighbor != 0 || yNeighbor != 0) && isAliveAt(x + xNeighbor, y + yNeighbor)) {
+                    neighborsCount++;
+                }
+            }
+        }
+        return neighborsCount;
+    }
+
     static class CellKey {
         int x;
         int y;
