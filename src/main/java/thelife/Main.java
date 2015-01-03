@@ -2,11 +2,17 @@ package thelife;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -21,38 +27,99 @@ public class Main extends Application {
     private static final Color gridColor = Color.GRAY;
     private static final Color background = Color.WHITE;
     private static final Color cellColor = Color.BLACK;
-    private static final int sceneWidth = 1000;
-    private static final int sceneHeight = 1000;
-    private static final int sceneCellWidth = 10;
-    private static final int sceneCellHeight = 10;
+    private int sceneWidth = 900;
+    private int sceneHeight = 700;
+    private int sceneCellSize = 9;
+
+    private int sceneCenterX = 0;
+    private int sceneCenterY = 0;
+
+    private int sceneColumns = sceneWidth / sceneCellSize;
+    private int sceneRows = sceneHeight / sceneCellSize;
+    private int sceneBottom = sceneCenterY - sceneRows / 2 + 1;
+    private int sceneLeft = sceneCenterX - sceneColumns / 2;
+    private int sceneTop = sceneCenterY + sceneRows / 2;
+    private int sceneRight = sceneCenterX + sceneColumns / 2 - 1;
 
 
     private Group sceneCells;
     private World world;
     private Space space;
+    private Group lines;
+    private boolean simulate;
+
+    private void changeScale(int newCellSize) {
+        sceneCellSize = newCellSize;
+
+        sceneColumns = sceneWidth / sceneCellSize;
+        sceneRows = sceneHeight / sceneCellSize;
+        sceneBottom = sceneCenterY - sceneRows / 2 + 1;
+        sceneLeft = sceneCenterX - sceneColumns / 2;
+        sceneTop = sceneCenterY + sceneRows / 2;
+        sceneRight = sceneCenterX + sceneColumns / 2 - 1;
+
+        drawGrid();
+        displayLife();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Group root = new Group();
-        primaryStage.setTitle("Hello World");
-        Scene scene = new Scene(root, sceneWidth, sceneHeight, background);
+
+        GridPane grid = new GridPane();
+        grid.setVgap(10);
+        grid.setHgap(10);
+        grid.setPadding(new Insets(10, 10, 10, 10));
+
+        GridPane topGroup = initTopGroup();
+
+        grid.add(topGroup, 0, 0);
+
+        primaryStage.setTitle("The Life");
+        Scene scene = new Scene(grid, background);
 
         initKeyEvenets(scene);
 
-        primaryStage.setScene(scene);
+        Group field = new Group();
 
-        Group lines = drawGrid();
-        root.getChildren().add(lines);
+        lines = new Group();
+        field.getChildren().add(lines);
+        drawGrid();
 
         sceneCells = new Group();
-        root.getChildren().add(sceneCells);
+        field.getChildren().add(sceneCells);
+
+        grid.add(field, 0, 1, 2, 1);
+        grid.add(new Label("Generation:"), 0, 2);
+        grid.add(new TextField("0"), 1, 2);
 
         initWorld();
 
         displayLife();
 
+        primaryStage.setScene(scene);
+//        primaryStage.sizeToScene();
         primaryStage.show();
 
+        primaryStage.setOnCloseRequest(event -> simulate = false);
+
+    }
+
+    private GridPane initTopGroup() {
+        GridPane topGroup = new GridPane();
+        topGroup.setHgap(10);
+
+        addButton(topGroup, "Run", event -> run());
+        addButton(topGroup, "Stop", event -> simulate = false);
+        addButton(topGroup, "+", event -> changeScale(sceneCellSize + 1));
+        addButton(topGroup, "-", event -> changeScale(sceneCellSize - 1));
+
+        return topGroup;
+    }
+
+    private void addButton(GridPane topGroup, String name, EventHandler<ActionEvent> action) {
+        Button runButton = new Button(name);
+        runButton.setOnAction(action);
+        topGroup.add(runButton, topGroup.getChildren().size(), 0);
     }
 
     private void initKeyEvenets(Scene scene) {
@@ -61,50 +128,53 @@ public class Main extends Application {
             public void handle(KeyEvent event) {
 
                 if (event.getCode() == KeyCode.T) {
-
-                    new Thread(() -> {
-                        FpsCalculator fpsCalculator = new FpsCalculator();
-                        fpsCalculator.beforeProcess();
-
-                        Delayer delayer = new Delayer();
-                        delayer.beforeProcess();
-
-                        while (true) {
-                            world.nextGeneration();
-
-                            redraw();
-
-                            delayer.delayIteration();
-                            fpsCalculator.calculateFrames();
-                        }
-
-                    }).start();
+                    run();
                 }
             }
         });
     }
 
+    private void run() {
+        new Thread(() -> {
+            FpsCalculator fpsCalculator = new FpsCalculator();
+            fpsCalculator.beforeProcess();
+
+            Delayer delayer = new Delayer(50);
+            delayer.beforeProcess();
+            simulate = true;
+            while (simulate) {
+                world.nextGeneration();
+
+                redraw();
+
+                delayer.delayIteration();
+                fpsCalculator.calculateFrames();
+            }
+
+        }).start();
+    }
+
     private void initWorld() {
         space = new Space();
-        space.setLifeAt(50, 50);
-        space.setLifeAt(51, 50);
-        space.setLifeAt(50, 51);
-        space.setLifeAt(49, 51);
-        space.setLifeAt(50, 52);
+        space.setLifeAt(0, 2);
+        space.setLifeAt(1, 2);
+        space.setLifeAt(0, 1);
+        space.setLifeAt(-1, 1);
+        space.setLifeAt(0, 0);
 
         world = new World(space);
     }
 
     private Group drawGrid() {
-        Group lines = new Group();
-        for (int i = 0; i < sceneHeight; i++) {
-            Line line = new Line(0, i * sceneCellHeight, sceneWidth, i * sceneCellHeight);
+        lines.getChildren().clear();
+        for (int i = 0; i <= sceneRows; i++) {
+            Line line = new Line(0, i * sceneCellSize, sceneColumns * sceneCellSize, i * sceneCellSize);
             line.setStroke(gridColor);
             line.setStrokeWidth(0.5);
             lines.getChildren().add(line);
         }
-        for (int i = 0; i < sceneWidth; i++) {
-            Line line = new Line(i * sceneCellWidth, 0, i * sceneCellWidth, sceneHeight);
+        for (int i = 0; i <= sceneColumns; i++) {
+            Line line = new Line(i * sceneCellSize, 0, i * sceneCellSize, sceneRows * sceneCellSize);
             line.setStroke(gridColor);
             line.setStrokeWidth(0.5);
             lines.getChildren().add(line);
@@ -128,23 +198,20 @@ public class Main extends Application {
     private void displayLife() {
         Set<Point> allAliveCells = space.getAllAliveCells();
         sceneCells.getChildren().clear();
-        for (Point cellKey : allAliveCells) {
-            placeCell(cellKey.getX(), cellKey.getY());
-        }
-    }
-
-    private void placeCell(double x, double y) {
-        placeCell((int) x, (int) y);
+        allAliveCells.stream()
+                .filter(p -> p.getX() >= sceneLeft && p.getX() <= sceneRight && p.getY() >= sceneBottom && p.getY() <= sceneTop)
+                .forEach(point -> placeCell(point.getX(), point.getY()));
     }
 
     private void placeCell(int x, int y) {
-//        System.out.printf("x=%-2s, y=%-2s\n", x, y);
         Shape cell;
-        cell = new Rectangle(x * sceneCellWidth + 0.5, y * sceneCellHeight + 0.5, sceneCellWidth - 1, sceneCellHeight - 1);
+        cell = new Rectangle(
+                -sceneLeft * sceneCellSize + x * sceneCellSize + 0.5,
+                (sceneBottom - 1) * sceneCellSize + (sceneRows * sceneCellSize) - y * sceneCellSize + 0.5,
+                sceneCellSize - 1, sceneCellSize - 1
+        );
         cell.setFill(cellColor);
-//        cell = new Circle(x * sceneCellWidth + sceneCellWidth / 2, y * sceneCellHeight + sceneCellHeight / 2, sceneCellWidth / 2, cellColor);
         sceneCells.getChildren().add(cell);
-//        cells.add(cell);
     }
 
 
