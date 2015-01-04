@@ -27,6 +27,7 @@ public class Main extends Application {
     private static final Color gridColor = Color.GRAY;
     private static final Color background = Color.WHITE;
     private static final Color cellColor = Color.BLACK;
+    public static final Color gridColor10 = Color.BLACK;
     private double sceneWidth = 900;
     private double sceneHeight = 600;
     private double sceneCellSize = 9;
@@ -34,12 +35,12 @@ public class Main extends Application {
     private double sceneCenterX = 0;
     private double sceneCenterY = 0;
 
-    private double sceneColumns = sceneWidth / sceneCellSize;
-    private double sceneRows = sceneHeight / sceneCellSize;
-    private double sceneBottom = sceneCenterY - sceneRows / 2;
-    private double sceneLeft = sceneCenterX - sceneColumns / 2;
-    private double sceneTop = sceneCenterY + sceneRows / 2;
-    private double sceneRight = sceneCenterX + sceneColumns / 2 - 1;
+    private double sceneColumns;
+    private double sceneRows;
+    private double sceneBottom;
+    private double sceneLeft;
+    private double sceneTop;
+    private double sceneRight;
 
 
     private Group sceneCells;
@@ -86,19 +87,20 @@ public class Main extends Application {
 
         Group field = new Group();
 
-        lines = new Group();
-        field.getChildren().add(lines);
-        drawGrid();
 
         sceneCells = new Group();
         field.getChildren().add(sceneCells);
+
+        lines = new Group();
+        field.getChildren().add(lines);
+        drawGrid();
 
         grid.add(field, 0, 1, 2, 1);
         grid.add(new Label("Generation:"), 0, 2);
         grid.add(new TextField("0"), 1, 2);
 
         initWorld();
-        changeScale(35);
+        changeScale(10);
         displayLife();
 
         primaryStage.setScene(scene);
@@ -116,8 +118,8 @@ public class Main extends Application {
         addButton(topGroup, "Reset", event -> reset());
         addButton(topGroup, "Run", event -> run());
         addButton(topGroup, "Stop", event -> simulate = false);
-        addButton(topGroup, "+", event -> changeScale(sceneCellSize + 1));
-        addButton(topGroup, "-", event -> changeScale(sceneCellSize - 1));
+        addButton(topGroup, "Zoom in", event -> changeScale(sceneCellSize * 2));
+        addButton(topGroup, "Zoom out", event -> changeScale(sceneCellSize / 2));
 
         return topGroup;
     }
@@ -179,12 +181,26 @@ public class Main extends Application {
     private void drawGrid() {
         lines.getChildren().clear();
 
+
         for (int y = (int) sceneBottom; y <= sceneTop; y++) {
-            addGridLine(0, fieldOffsetY - y * sceneCellSize, sceneColumns * sceneCellSize, fieldOffsetY - y * sceneCellSize);
+            if (sceneCellSize >= 5 || y % 10 == 0) {
+                addGridLine(0,
+                        fieldOffsetY - y * sceneCellSize,
+                        sceneColumns * sceneCellSize,
+                        fieldOffsetY - y * sceneCellSize,
+                        y % 10 == 0 && sceneCellSize >= 5 ? gridColor10 : gridColor
+                );
+            }
         }
 
         for (int x = (int) sceneLeft; x <= sceneRight; x++) {
-            addGridLine(fieldOffsetX + x * sceneCellSize, 0, fieldOffsetX + x * sceneCellSize, sceneRows * sceneCellSize);
+            if (sceneCellSize >= 5 || x % 10 == 0) {
+                addGridLine(fieldOffsetX + x * sceneCellSize,
+                        0,
+                        fieldOffsetX + x * sceneCellSize,
+                        sceneRows * sceneCellSize,
+                        x % 10 == 0 && sceneCellSize >= 5 ? gridColor10 : gridColor);
+            }
         }
 
         Rectangle rectangle = new Rectangle(0, 0, sceneWidth, sceneHeight);
@@ -194,9 +210,9 @@ public class Main extends Application {
         lines.getChildren().add(rectangle);
     }
 
-    private void addGridLine(double startX, double startY, double endX, double endY) {
+    private void addGridLine(double startX, double startY, double endX, double endY, Color color) {
         Line line = new Line(startX, startY, endX, endY);
-        line.setStroke(gridColor);
+        line.setStroke(color);
         line.setStrokeWidth(0.5);
         lines.getChildren().add(line);
     }
@@ -225,10 +241,10 @@ public class Main extends Application {
     private void placeCell(int x, int y) {
 
         Shape cell;
-        double sceneX = fieldOffsetX + x * sceneCellSize + 0.5;
-        double sceneY = fieldOffsetY - y * sceneCellSize + 0.5;
-        double width = sceneCellSize - 1;
-        double height = sceneCellSize - 1;
+        double sceneX = fieldOffsetX + x * sceneCellSize;
+        double sceneY = fieldOffsetY - y * sceneCellSize;
+        double width = sceneCellSize;
+        double height = sceneCellSize;
 
         if (sceneX < 0) {
             width -= -sceneX;
