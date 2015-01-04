@@ -24,32 +24,18 @@ import java.util.concurrent.CountDownLatch;
 
 public class Main extends Application {
 
-    private static final Color gridColor = Color.GRAY;
+    private static final Color gridColor = Color.LIGHTGRAY;
     private static final Color background = Color.WHITE;
     private static final Color cellColor = Color.BLACK;
-    public static final Color gridColor10 = Color.BLACK;
-    private double sceneWidth = 900;
-    private double sceneHeight = 600;
-    private double sceneCellSize = 9;
+    public static final Color gridColor10 = Color.DARKGRAY;
 
-    private double sceneCenterX = 0;
-    private double sceneCenterY = 0;
-
-    private double sceneColumns;
-    private double sceneRows;
-    private double sceneBottom;
-    private double sceneLeft;
-    private double sceneTop;
-    private double sceneRight;
-
+    private SceneScreenConverter sceneScreen;
 
     private Group sceneCells;
     private World world;
     private Space space;
     private Group lines;
     private boolean simulate;
-    private double fieldOffsetY;
-    private double fieldOffsetX;
     private Label generationText;
     private Label populationText;
     private Label fpsText;
@@ -60,24 +46,15 @@ public class Main extends Application {
     private Delayer delayer;
 
     private void changeScale(double newCellSize) {
-        sceneCellSize = newCellSize;
-
-        sceneColumns = sceneWidth / sceneCellSize;
-        sceneRows = sceneHeight / sceneCellSize;
-        sceneBottom = sceneCenterY - sceneRows / 2;
-        sceneLeft = sceneCenterX - sceneColumns / 2;
-        sceneTop = sceneCenterY + sceneRows / 2;
-        sceneRight = sceneCenterX + sceneColumns / 2;
-
-        fieldOffsetY = sceneBottom * sceneCellSize + sceneHeight;
-        fieldOffsetX = -sceneLeft * sceneCellSize;
-
+        sceneScreen.changeScale(newCellSize);
         drawSceneGrid();
         displayLife();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        sceneScreen = new SceneScreenConverter();
 
         GridPane mainGrid = new GridPane();
         mainGrid.setVgap(10);
@@ -141,15 +118,17 @@ public class Main extends Application {
 
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
             double deltaX = newValue.doubleValue() - oldValue.doubleValue();
-            sceneWidth += deltaX;
-            changeScale(sceneCellSize);
+            sceneScreen.changeWidthFor(deltaX);
+            drawSceneGrid();
+            displayLife();
 
         });
 
         scene.heightProperty().addListener((observable, oldValue, newValue) -> {
             double deltaY = newValue.doubleValue() - oldValue.doubleValue();
-            sceneHeight += deltaY;
-            changeScale(sceneCellSize);
+            sceneScreen.changeHeightFor(deltaY);
+            drawSceneGrid();
+            displayLife();
         });
 
         primaryStage.setOnCloseRequest(event -> simulate = false);
@@ -159,7 +138,7 @@ public class Main extends Application {
     private void displayIterationDelay(int newDelay) {
         if (newDelay >= 0 && newDelay < iterationDelays.length) {
             iterationDelayIndex = newDelay;
-            iterationTimeText.setText(String.format("%2.2fs", (double)iterationDelays[iterationDelayIndex] / 1000.0));
+            iterationTimeText.setText(String.format("%2.2fs", (double) iterationDelays[iterationDelayIndex] / 1000.0));
             if (delayer != null) {
                 delayer = new Delayer(iterationDelays[iterationDelayIndex]);
             }
@@ -175,8 +154,8 @@ public class Main extends Application {
         addButton(topGroup, "Run", event -> run());
         addButton(topGroup, "Stop", event -> simulate = false);
         topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
-        addButton(topGroup, "Zoom in", event -> changeScale(sceneCellSize * 2));
-        addButton(topGroup, "Zoom out", event -> changeScale(sceneCellSize / 2));
+        addButton(topGroup, "Zoom in", event -> changeScale(sceneScreen.getScale() * 2));
+        addButton(topGroup, "Zoom out", event -> changeScale(sceneScreen.getScale() / 2));
         topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
         addButton(topGroup, "Speed +", event -> displayIterationDelay(iterationDelayIndex + 1));
         addButton(topGroup, "Speed -", event -> displayIterationDelay(iterationDelayIndex - 1));
@@ -242,33 +221,26 @@ public class Main extends Application {
     private void drawSceneGrid() {
         lines.getChildren().clear();
 
+        sceneScreen.fieldColumns().filter(this::shouldShowGridLine).forEach(this::addHorizontalGridLine);
+        sceneScreen.fieldRows().filter(this::shouldShowGridLine).forEach(this::addVerticalGridLine);
 
-        for (int y = (int) sceneBottom; y <= sceneTop; y++) {
-            if (sceneCellSize >= 5 || y % 10 == 0) {
-                addGridLine(0,
-                        fieldOffsetY - y * sceneCellSize,
-                        sceneColumns * sceneCellSize,
-                        fieldOffsetY - y * sceneCellSize,
-                        y % 10 == 0 && sceneCellSize >= 5 ? gridColor10 : gridColor
-                );
-            }
-        }
-
-        for (int x = (int) sceneLeft; x <= sceneRight; x++) {
-            if (sceneCellSize >= 5 || x % 10 == 0) {
-                addGridLine(fieldOffsetX + x * sceneCellSize,
-                        0,
-                        fieldOffsetX + x * sceneCellSize,
-                        sceneRows * sceneCellSize,
-                        x % 10 == 0 && sceneCellSize >= 5 ? gridColor10 : gridColor);
-            }
-        }
-
-        Rectangle rectangle = new Rectangle(0, 0, sceneWidth, sceneHeight);
+        Rectangle rectangle = new Rectangle(0, 0, sceneScreen.sceneWidth, sceneScreen.sceneHeight);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
 
         lines.getChildren().add(rectangle);
+    }
+
+    private boolean shouldShowGridLine(int y) {
+        return sceneScreen.getScale() >= 5 || y % 10 == 0;
+    }
+
+    private void addHorizontalGridLine(int x) {
+        addGridLine(sceneScreen.toScreenX(x), 0, sceneScreen.toScreenX(x), sceneScreen.getSceneHeight(), chooseGridLineColor(x));
+    }
+
+    private void addVerticalGridLine(int y) {
+        addGridLine(0, sceneScreen.toScreenY(y), sceneScreen.getSceneWidth(), sceneScreen.toScreenY(y), chooseGridLineColor(y));
     }
 
     private void addGridLine(double startX, double startY, double endX, double endY, Color color) {
@@ -276,6 +248,10 @@ public class Main extends Application {
         line.setStroke(color);
         line.setStrokeWidth(0.5);
         lines.getChildren().add(line);
+    }
+
+    private Color chooseGridLineColor(int x) {
+        return x % 10 == 0 && sceneScreen.getScale() >= 5 ? gridColor10 : gridColor;
     }
 
     private void redraw() {
@@ -295,46 +271,18 @@ public class Main extends Application {
         Set<Point> allAliveCells = space.getAllAliveCells();
         sceneCells.getChildren().clear();
 
-        allAliveCells.stream()
-                .filter(p -> p.getX() >= Math.floor(sceneLeft) && p.getX() < sceneRight && p.getY() > sceneBottom && p.getY() <= Math.ceil(sceneTop))
-                .forEach(point -> placeCell(point.getX(), point.getY()));
+        allAliveCells.stream().filter(sceneScreen::isVisible).forEach(this::placeCell);
 
         generationText.setText(String.valueOf(world.getGeneration()));
         populationText.setText(String.valueOf(allAliveCells.size()));
     }
 
-    private void placeCell(int x, int y) {
-
-        Shape cell;
-        double sceneX = fieldOffsetX + x * sceneCellSize;
-        double sceneY = fieldOffsetY - y * sceneCellSize;
-        double width = sceneCellSize;
-        double height = sceneCellSize;
-
-        if (sceneX < 0) {
-            width -= -sceneX;
-            sceneX = 0;
-        }
-
-        if (sceneY < 0) {
-            height -= -sceneY;
-            sceneY = 0;
-        }
-
-        if (sceneX + width > sceneWidth) {
-            width -= sceneX + width - sceneWidth;
-        }
-
-        if (sceneY + height > sceneHeight) {
-            height -= sceneY + height - sceneHeight;
-        }
-
-        cell = new Rectangle(sceneX, sceneY, width, height);
-
+    private void placeCell(Point point) {
+        ScreenRectangle screenRect = sceneScreen.toScreenCoord(point);
+        Shape cell = new Rectangle(screenRect.getX(), screenRect.getY(), screenRect.getWidth(), screenRect.getHeight());
         cell.setFill(cellColor);
         sceneCells.getChildren().add(cell);
     }
-
 
     public static void main(String[] args) {
         launch(args);
