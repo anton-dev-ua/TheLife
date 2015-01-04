@@ -9,7 +9,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -50,6 +49,10 @@ public class Main extends Application {
     private boolean simulate;
     private double fieldOffsetY;
     private double fieldOffsetX;
+    private Label generationText;
+    private Label populationText;
+    private Label fpsText;
+    private Group field;
 
     private void changeScale(double newCellSize) {
         sceneCellSize = newCellSize;
@@ -64,48 +67,78 @@ public class Main extends Application {
         fieldOffsetY = sceneBottom * sceneCellSize + sceneHeight;
         fieldOffsetX = -sceneLeft * sceneCellSize;
 
-        drawGrid();
+        drawSceneGrid();
         displayLife();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        GridPane grid = new GridPane();
-        grid.setVgap(10);
-        grid.setHgap(10);
-        grid.setPadding(new Insets(10, 10, 10, 10));
+        GridPane mainGrid = new GridPane();
+        mainGrid.setVgap(10);
+        mainGrid.setHgap(10);
+        mainGrid.setPadding(new Insets(10, 10, 10, 10));
 
         GridPane topGroup = initTopGroup();
 
-        grid.add(topGroup, 0, 0);
+        mainGrid.add(topGroup, 0, 0);
 
         primaryStage.setTitle("The Life");
-        Scene scene = new Scene(grid, background);
+        Scene scene = new Scene(mainGrid, background);
+
 
         initKeyEvenets(scene);
 
-        Group field = new Group();
-
+        field = new Group();
 
         sceneCells = new Group();
         field.getChildren().add(sceneCells);
 
         lines = new Group();
         field.getChildren().add(lines);
-        drawGrid();
+        drawSceneGrid();
 
-        grid.add(field, 0, 1, 2, 1);
-        grid.add(new Label("Generation:"), 0, 2);
-        grid.add(new TextField("0"), 1, 2);
+        mainGrid.add(field, 0, 1);
+
+        GridPane bottomGrid = new GridPane();
+        bottomGrid.setHgap(5);
+
+        bottomGrid.add(new Label("Generation:"), 0, 0);
+        generationText = new Label("0");
+        generationText.setMinWidth(40);
+        bottomGrid.add(generationText, 1, 0);
+
+        bottomGrid.add(new Label("Population:"), 2, 0);
+        populationText = new Label("0");
+        populationText.setMinWidth(40);
+        bottomGrid.add(populationText, 3, 0);
+
+        bottomGrid.add(new Label("FPS:"), 4, 0);
+        fpsText = new Label("0");
+        bottomGrid.add(fpsText, 5, 0);
+
+        mainGrid.add(bottomGrid, 0, 2);
+
 
         initWorld();
         changeScale(10);
         displayLife();
 
         primaryStage.setScene(scene);
-//        primaryStage.sizeToScene();
         primaryStage.show();
+
+        scene.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double deltaX = newValue.doubleValue() - oldValue.doubleValue();
+            sceneWidth += deltaX;
+            changeScale(sceneCellSize);
+
+        });
+
+        scene.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double deltaY = newValue.doubleValue() - oldValue.doubleValue();
+            sceneHeight += deltaY;
+            changeScale(sceneCellSize);
+        });
 
         primaryStage.setOnCloseRequest(event -> simulate = false);
 
@@ -157,6 +190,7 @@ public class Main extends Application {
 
                 delayer.delayIteration();
                 fpsCalculator.calculateFrames();
+                Platform.runLater(() -> fpsText.setText(String.format("%5.2f", fpsCalculator.getFps())));
             }
 
         }).start();
@@ -178,7 +212,7 @@ public class Main extends Application {
         displayLife();
     }
 
-    private void drawGrid() {
+    private void drawSceneGrid() {
         lines.getChildren().clear();
 
 
@@ -233,9 +267,13 @@ public class Main extends Application {
     private void displayLife() {
         Set<Point> allAliveCells = space.getAllAliveCells();
         sceneCells.getChildren().clear();
+
         allAliveCells.stream()
                 .filter(p -> p.getX() >= Math.floor(sceneLeft) && p.getX() < sceneRight && p.getY() > sceneBottom && p.getY() <= Math.ceil(sceneTop))
                 .forEach(point -> placeCell(point.getX(), point.getY()));
+
+        generationText.setText(String.valueOf(world.getGeneration()));
+        populationText.setText(String.valueOf(allAliveCells.size()));
     }
 
     private void placeCell(int x, int y) {

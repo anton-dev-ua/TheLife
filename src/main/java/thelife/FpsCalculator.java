@@ -1,8 +1,9 @@
 package thelife;
 
 public class FpsCalculator {
-    long startTime;
-    long frames;
+    private long startTime;
+    private long frames;
+    private double fps;
 
     public FpsCalculator() {
     }
@@ -17,12 +18,16 @@ public class FpsCalculator {
 
         long totalSpentTime = System.currentTimeMillis() - startTime;
         if (frames % 25 == 0 && totalSpentTime > 0) {
-            System.out.printf("FPS: %5.2f\n", (((double) frames / (double) totalSpentTime) * 1000));
+            fps = ((double) frames / (double) totalSpentTime) * 1000.0;
         }
 
         if (totalSpentTime > 5 * 1000) {
             frames = 0;
             startTime = System.currentTimeMillis();
         }
+    }
+
+    public double getFps() {
+        return fps;
     }
 }

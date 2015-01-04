@@ -7,7 +7,7 @@ import static thelife.Utils.aNeighborPoints;
 
 public class World {
     private Space space;
-    int generation = 0;
+    private int generation = 0;
 
     public World(Space space) {
 
@@ -26,8 +26,7 @@ public class World {
             space.removeLifeAt(cellKey.getX(), cellKey.getY());
         }
 
-//        System.out.printf("Generation: %5s, lives:%s\n", ++generation, space.getAllAliveCells().size());
-
+        generation++;
     }
 
     private Set<Point> findCellsToDie() {
@@ -58,5 +57,9 @@ public class World {
         }
 
         return toBorn;
+    }
+
+    public int getGeneration() {
+        return generation;
     }
 }
