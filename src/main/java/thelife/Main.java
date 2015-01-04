@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -53,6 +54,10 @@ public class Main extends Application {
     private Label populationText;
     private Label fpsText;
     private Group field;
+    private Label iterationTimeText;
+    private int iterationDelayIndex;
+    private long iterationDelays[] = {2000, 1000, 500, 250, 100, 50, 10, 0};
+    private Delayer delayer;
 
     private void changeScale(double newCellSize) {
         sceneCellSize = newCellSize;
@@ -115,7 +120,14 @@ public class Main extends Application {
 
         bottomGrid.add(new Label("FPS:"), 4, 0);
         fpsText = new Label("0");
+        fpsText.setMinWidth(60);
         bottomGrid.add(fpsText, 5, 0);
+
+        bottomGrid.add(new Label("Iteration time:"), 6, 0);
+        iterationTimeText = new Label("0");
+        iterationTimeText.setMinWidth(60);
+        bottomGrid.add(iterationTimeText, 7, 0);
+        displayIterationDelay(5);
 
         mainGrid.add(bottomGrid, 0, 2);
 
@@ -144,15 +156,30 @@ public class Main extends Application {
 
     }
 
+    private void displayIterationDelay(int newDelay) {
+        if (newDelay >= 0 && newDelay < iterationDelays.length) {
+            iterationDelayIndex = newDelay;
+            iterationTimeText.setText(String.format("%2.2fs", (double)iterationDelays[iterationDelayIndex] / 1000.0));
+            if (delayer != null) {
+                delayer = new Delayer(iterationDelays[iterationDelayIndex]);
+            }
+        }
+    }
+
     private GridPane initTopGroup() {
         GridPane topGroup = new GridPane();
         topGroup.setHgap(10);
 
         addButton(topGroup, "Reset", event -> reset());
+        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
         addButton(topGroup, "Run", event -> run());
         addButton(topGroup, "Stop", event -> simulate = false);
+        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
         addButton(topGroup, "Zoom in", event -> changeScale(sceneCellSize * 2));
         addButton(topGroup, "Zoom out", event -> changeScale(sceneCellSize / 2));
+        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
+        addButton(topGroup, "Speed +", event -> displayIterationDelay(iterationDelayIndex + 1));
+        addButton(topGroup, "Speed -", event -> displayIterationDelay(iterationDelayIndex - 1));
 
         return topGroup;
     }
@@ -180,8 +207,8 @@ public class Main extends Application {
             FpsCalculator fpsCalculator = new FpsCalculator();
             fpsCalculator.beforeProcess();
 
-            Delayer delayer = new Delayer(50);
-            delayer.beforeProcess();
+            delayer = new Delayer(iterationDelays[iterationDelayIndex]);
+
             simulate = true;
             while (simulate) {
                 world.nextGeneration();

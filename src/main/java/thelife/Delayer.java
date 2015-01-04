@@ -1,10 +1,10 @@
 package thelife;
 
 public class Delayer {
-    long delayTime;
-    long iterationStartTime;
-    long startTime;
-    long iterations;
+    private long delayTime;
+    private long iterationStartTime;
+    private long startTime;
+    private long iterations;
 
     public Delayer() {
         this(100);
@@ -12,6 +12,7 @@ public class Delayer {
 
     public Delayer(long delayTime) {
         this.delayTime = delayTime;
+        beforeProcess();
     }
 
     void beforeProcess() {
