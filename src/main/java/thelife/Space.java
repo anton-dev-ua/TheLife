@@ -30,4 +30,7 @@ public class Space {
         return field.keySet();
     }
 
+    public void clear() {
+        field.clear();
+    }
 }

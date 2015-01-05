@@ -62,4 +62,9 @@ public class World {
     public int getGeneration() {
         return generation;
     }
+
+    public void clear() {
+        generation = 0;
+        space.clear();
+    }
 }
