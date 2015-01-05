@@ -73,8 +73,8 @@ public class Main extends Application {
 
         addSeparator(topGroup);
 
-        addButton(topGroup, "Zoom in", event -> sceneVisualizer.changeScale(sceneVisualizer.sceneScreen.getScale() * 2));
-        addButton(topGroup, "Zoom out", event -> sceneVisualizer.changeScale(sceneVisualizer.sceneScreen.getScale() / 2));
+        addButton(topGroup, "Zoom in", event -> sceneVisualizer.zoomIn());
+        addButton(topGroup, "Zoom out", event -> sceneVisualizer.zoomOut());
 
         addSeparator(topGroup);
 

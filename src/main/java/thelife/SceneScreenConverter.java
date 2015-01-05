@@ -4,22 +4,19 @@ import java.util.stream.IntStream;
 
 public class SceneScreenConverter {
 
-    double sceneWidth = 900;
-    double sceneHeight = 600;
-    double sceneCellSize = 9;
-    double sceneCenterX = 0;
-    double sceneCenterY = 0;
-    double sceneColumns;
-    double sceneRows;
-    double sceneBottom;
-    double sceneLeft;
-    double sceneTop;
-    double sceneRight;
-    double fieldOffsetY;
-    double fieldOffsetX;
-
-    public SceneScreenConverter() {
-    }
+    private double sceneWidth = 900;
+    private double sceneHeight = 600;
+    private double sceneCellSize = 9;
+    private double sceneCenterX = 0;
+    private double sceneCenterY = 0;
+    private double sceneColumns;
+    private double sceneRows;
+    private double sceneBottom;
+    private double sceneLeft;
+    private double sceneTop;
+    private double sceneRight;
+    private double fieldOffsetY;
+    private double fieldOffsetX;
 
     public SceneScreenConverter(double sceneWidth, double sceneHeight, double scale) {
         this.sceneWidth = sceneWidth;
@@ -28,7 +25,7 @@ public class SceneScreenConverter {
         rescale();
     }
 
-    void rescale() {
+    private void rescale() {
         sceneColumns = sceneWidth / sceneCellSize;
         sceneRows = sceneHeight / sceneCellSize;
         sceneBottom = sceneCenterY - sceneRows / 2;
@@ -40,50 +37,50 @@ public class SceneScreenConverter {
         fieldOffsetX = -sceneLeft * sceneCellSize;
     }
 
-    void changeHeightFor(double deltaY) {
+    public void changeHeightFor(double deltaY) {
         sceneHeight += deltaY;
         rescale();
     }
 
-    void changeWidthFor(double deltaX) {
+    public void changeWidthFor(double deltaX) {
         sceneWidth += deltaX;
         rescale();
     }
 
-    void changeScale(double newCellSize) {
+    public void changeScale(double newCellSize) {
         sceneCellSize = newCellSize;
         rescale();
     }
 
-    double getSceneWidth() {
+    public double getSceneWidth() {
         return sceneWidth;
     }
 
-    double getSceneHeight() {
+    public double getSceneHeight() {
         return sceneHeight;
     }
 
-    double getScale() {
+    public double getScale() {
         return sceneCellSize;
     }
 
-    IntStream fieldColumns() {
+    public IntStream fieldColumns() {
         return IntStream.rangeClosed((int) sceneLeft, (int) sceneRight);
     }
 
-    IntStream fieldRows() {
+    public IntStream fieldRows() {
         return IntStream.rangeClosed((int) sceneBottom, (int) sceneTop);
     }
 
-    double toScreenX(int x) {
+    public double toScreenX(int x) {
         return fieldOffsetX + x * sceneCellSize;
     }
 
-    double toScreenY(int y) {
+    public double toScreenY(int y) {
         return fieldOffsetY - y * sceneCellSize;
     }
 
-    ScreenRectangle toScreenCoord(Point point) {
+    public ScreenRectangle toScreenRect(Point point) {
         double screenX = toScreenX(point.getX());
         double screenY = toScreenY(point.getY());
         double width = getScale();

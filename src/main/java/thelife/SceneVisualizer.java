@@ -9,12 +9,13 @@ import javafx.scene.shape.Shape;
 import java.util.Set;
 
 public class SceneVisualizer {
-    static final Color gridColor = Color.LIGHTGRAY;
-    static final Color cellColor = Color.BLACK;
-    public static final Color gridColor10 = Color.DARKGRAY;
-    SceneScreenConverter sceneScreen;
-    Group sceneCells;
-    Group gridLines;
+    private static final Color gridColor = Color.LIGHTGRAY;
+    private static final Color cellColor = Color.BLACK;
+    private static final Color gridColor10 = Color.DARKGRAY;
+
+    private SceneScreenConverter sceneScreen;
+    private Group sceneCells;
+    private Group gridLines;
     private Space space;
 
     public SceneVisualizer(Space space) {
@@ -22,86 +23,92 @@ public class SceneVisualizer {
         sceneScreen = new SceneScreenConverter(900, 600, 10);
     }
 
-    Group buildScenePane() {
-        Group scene = new Group();
-
+    public Group buildScenePane() {
         sceneCells = new Group();
-        scene.getChildren().add(sceneCells);
-
         gridLines = new Group();
-        scene.getChildren().add(gridLines);
+
+        Group scene = new Group();
+        scene.getChildren().addAll(sceneCells, gridLines);
 
         return scene;
     }
 
-    void drawSceneGrid() {
+
+    public void drawSceneGrid() {
         gridLines.getChildren().clear();
 
         sceneScreen.fieldColumns().filter(this::shouldShowGridLine).forEach(this::addHorizontalGridLine);
         sceneScreen.fieldRows().filter(this::shouldShowGridLine).forEach(this::addVerticalGridLine);
 
-        Rectangle rectangle = new Rectangle(0, 0, sceneScreen.sceneWidth, sceneScreen.sceneHeight);
+        Rectangle rectangle = new Rectangle(0, 0, sceneScreen.getSceneWidth(), sceneScreen.getSceneHeight());
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
 
         gridLines.getChildren().add(rectangle);
     }
 
-    boolean shouldShowGridLine(int y) {
+    private boolean shouldShowGridLine(int y) {
         return sceneScreen.getScale() >= 5 || y % 10 == 0;
     }
 
-    void addHorizontalGridLine(int x) {
+    private void addHorizontalGridLine(int x) {
         addGridLine(sceneScreen.toScreenX(x), 0, sceneScreen.toScreenX(x), sceneScreen.getSceneHeight(), chooseGridLineColor(x));
     }
 
-    void addVerticalGridLine(int y) {
+    private void addVerticalGridLine(int y) {
         addGridLine(0, sceneScreen.toScreenY(y), sceneScreen.getSceneWidth(), sceneScreen.toScreenY(y), chooseGridLineColor(y));
     }
 
-    void addGridLine(double startX, double startY, double endX, double endY, Color color) {
+    private void addGridLine(double startX, double startY, double endX, double endY, Color color) {
         Line line = new Line(startX, startY, endX, endY);
         line.setStroke(color);
         line.setStrokeWidth(0.5);
         gridLines.getChildren().add(line);
     }
 
-    Color chooseGridLineColor(int x) {
+    private Color chooseGridLineColor(int x) {
         return x % 10 == 0 && sceneScreen.getScale() >= 5 ? gridColor10 : gridColor;
     }
 
-    void displayLife() {
+    public void displayLife() {
         Set<Point> allAliveCells = space.getAllAliveCells();
         sceneCells.getChildren().clear();
 
-        allAliveCells.stream().filter(sceneScreen::isVisible).forEach(this::placeCell);
+        allAliveCells.stream().filter(sceneScreen::isVisible).map(sceneScreen::toScreenRect).forEach(this::drawCell);
 
     }
 
-    void placeCell(Point point) {
-        ScreenRectangle screenRect = sceneScreen.toScreenCoord(point);
+    void drawCell(ScreenRectangle screenRect) {
         Shape cell = new Rectangle(screenRect.getX(), screenRect.getY(), screenRect.getWidth(), screenRect.getHeight());
         cell.setFill(cellColor);
         sceneCells.getChildren().add(cell);
     }
 
-    void redrawScene() {
+    public void redrawScene() {
         drawSceneGrid();
         displayLife();
     }
 
-    void changeScale(double newCellSize) {
-        sceneScreen.changeScale(newCellSize);
-        redrawScene();
-    }
-
-    void changeHeightFor(double deltaY) {
+    public void changeHeightFor(double deltaY) {
         sceneScreen.changeHeightFor(deltaY);
         redrawScene();
     }
 
-    void changeWidthFor(double deltaX) {
+    public void changeWidthFor(double deltaX) {
         sceneScreen.changeWidthFor(deltaX);
+        redrawScene();
+    }
+
+    public void zoomIn() {
+       changeScale(sceneScreen.getScale() * 2);
+    }
+
+    public void zoomOut() {
+        changeScale(sceneScreen.getScale() / 2);
+    }
+
+    private void changeScale(double scale) {
+        sceneScreen.changeScale(scale);
         redrawScene();
     }
 }
