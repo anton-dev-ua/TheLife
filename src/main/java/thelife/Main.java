@@ -10,8 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -34,105 +32,106 @@ public class Main extends Application {
     private Group sceneCells;
     private World world;
     private Space space;
-    private Group lines;
+    private Group gridLines;
     private boolean simulate;
     private Label generationText;
     private Label populationText;
     private Label fpsText;
-    private Group field;
     private Label iterationTimeText;
-    private int iterationDelayIndex;
+    private int iterationDelayIndex = 5;
     private long iterationDelays[] = {2000, 1000, 500, 250, 100, 50, 10, 0};
     private Delayer delayer;
 
     private void changeScale(double newCellSize) {
         sceneScreen.changeScale(newCellSize);
-        drawSceneGrid();
-        displayLife();
+        redrawScene();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        sceneScreen = new SceneScreenConverter();
+        sceneScreen = new SceneScreenConverter(900, 600, 10);
 
+        primaryStage.setTitle("The Life");
+
+        GridPane mainGrid = createMainGrid();
+
+        mainGrid.add(buildTopGroup(), 0, 0);
+        mainGrid.add(buildScenePane(), 0, 1);
+        mainGrid.add(buildStatusBar(), 0, 2);
+
+        initWorld();
+
+        displayIterationDelay(5);
+        redrawScene();
+
+        primaryStage.setScene(new Scene(mainGrid, background));
+
+        primaryStage.show();
+
+        handleStageEvenets(primaryStage);
+
+
+    }
+
+    private void handleStageEvenets(Stage primaryStage) {
+        primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double deltaX = newValue.doubleValue() - oldValue.doubleValue();
+            sceneScreen.changeWidthFor(deltaX);
+            redrawScene();
+
+        });
+
+        primaryStage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double deltaY = newValue.doubleValue() - oldValue.doubleValue();
+            sceneScreen.changeHeightFor(deltaY);
+            redrawScene();
+        });
+
+        primaryStage.setOnCloseRequest(event -> simulate = false);
+    }
+
+    private GridPane createMainGrid() {
         GridPane mainGrid = new GridPane();
         mainGrid.setVgap(10);
         mainGrid.setHgap(10);
         mainGrid.setPadding(new Insets(10, 10, 10, 10));
+        return mainGrid;
+    }
 
-        GridPane topGroup = initTopGroup();
-
-        mainGrid.add(topGroup, 0, 0);
-
-        primaryStage.setTitle("The Life");
-        Scene scene = new Scene(mainGrid, background);
-
-
-        initKeyEvenets(scene);
-
-        field = new Group();
-
-        sceneCells = new Group();
-        field.getChildren().add(sceneCells);
-
-        lines = new Group();
-        field.getChildren().add(lines);
-        drawSceneGrid();
-
-        mainGrid.add(field, 0, 1);
-
+    private GridPane buildStatusBar() {
         GridPane bottomGrid = new GridPane();
         bottomGrid.setHgap(5);
+        generationText = addStatusInfoLabel(bottomGrid, "Generation:");
+        populationText = addStatusInfoLabel(bottomGrid, "Population:");
+        fpsText = addStatusInfoLabel(bottomGrid, "FPS");
+        iterationTimeText = addStatusInfoLabel(bottomGrid, "Iteration time:");
+        return bottomGrid;
+    }
 
-        bottomGrid.add(new Label("Generation:"), 0, 0);
-        generationText = new Label("0");
-        generationText.setMinWidth(40);
-        bottomGrid.add(generationText, 1, 0);
+    private Group buildScenePane() {
+        Group scene = new Group();
 
-        bottomGrid.add(new Label("Population:"), 2, 0);
-        populationText = new Label("0");
-        populationText.setMinWidth(40);
-        bottomGrid.add(populationText, 3, 0);
+        sceneCells = new Group();
+        scene.getChildren().add(sceneCells);
 
-        bottomGrid.add(new Label("FPS:"), 4, 0);
-        fpsText = new Label("0");
-        fpsText.setMinWidth(60);
-        bottomGrid.add(fpsText, 5, 0);
+        gridLines = new Group();
+        scene.getChildren().add(gridLines);
 
-        bottomGrid.add(new Label("Iteration time:"), 6, 0);
-        iterationTimeText = new Label("0");
-        iterationTimeText.setMinWidth(60);
-        bottomGrid.add(iterationTimeText, 7, 0);
-        displayIterationDelay(5);
+        return scene;
+    }
 
-        mainGrid.add(bottomGrid, 0, 2);
+    private Label addStatusInfoLabel(GridPane bottomGrid, String name) {
+        Label infoText = new Label("0");
+        bottomGrid.add(new Label(name), bottomGrid.getChildren().size(), 0);
+        infoText.setMinWidth(40);
+        bottomGrid.add(infoText, bottomGrid.getChildren().size(), 0);
+        return infoText;
+    }
 
-
-        initWorld();
-        changeScale(10);
+    private void redrawScene() {
+        drawSceneGrid();
         displayLife();
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        scene.widthProperty().addListener((observable, oldValue, newValue) -> {
-            double deltaX = newValue.doubleValue() - oldValue.doubleValue();
-            sceneScreen.changeWidthFor(deltaX);
-            drawSceneGrid();
-            displayLife();
-
-        });
-
-        scene.heightProperty().addListener((observable, oldValue, newValue) -> {
-            double deltaY = newValue.doubleValue() - oldValue.doubleValue();
-            sceneScreen.changeHeightFor(deltaY);
-            drawSceneGrid();
-            displayLife();
-        });
-
-        primaryStage.setOnCloseRequest(event -> simulate = false);
-
     }
 
     private void displayIterationDelay(int newDelay) {
@@ -145,40 +144,38 @@ public class Main extends Application {
         }
     }
 
-    private GridPane initTopGroup() {
+    private GridPane buildTopGroup() {
         GridPane topGroup = new GridPane();
         topGroup.setHgap(10);
 
         addButton(topGroup, "Reset", event -> reset());
-        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
+
+        addSeparator(topGroup);
+
         addButton(topGroup, "Run", event -> run());
         addButton(topGroup, "Stop", event -> simulate = false);
-        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
+
+        addSeparator(topGroup);
+
         addButton(topGroup, "Zoom in", event -> changeScale(sceneScreen.getScale() * 2));
         addButton(topGroup, "Zoom out", event -> changeScale(sceneScreen.getScale() / 2));
-        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
+
+        addSeparator(topGroup);
+
         addButton(topGroup, "Speed +", event -> displayIterationDelay(iterationDelayIndex + 1));
         addButton(topGroup, "Speed -", event -> displayIterationDelay(iterationDelayIndex - 1));
 
         return topGroup;
     }
 
+    private void addSeparator(GridPane topGroup) {
+        topGroup.add(new Separator(), topGroup.getChildren().size(), 0);
+    }
+
     private void addButton(GridPane topGroup, String name, EventHandler<ActionEvent> action) {
         Button runButton = new Button(name);
         runButton.setOnAction(action);
         topGroup.add(runButton, topGroup.getChildren().size(), 0);
-    }
-
-    private void initKeyEvenets(Scene scene) {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-
-                if (event.getCode() == KeyCode.T) {
-                    run();
-                }
-            }
-        });
     }
 
     private void run() {
@@ -219,7 +216,7 @@ public class Main extends Application {
     }
 
     private void drawSceneGrid() {
-        lines.getChildren().clear();
+        gridLines.getChildren().clear();
 
         sceneScreen.fieldColumns().filter(this::shouldShowGridLine).forEach(this::addHorizontalGridLine);
         sceneScreen.fieldRows().filter(this::shouldShowGridLine).forEach(this::addVerticalGridLine);
@@ -228,7 +225,7 @@ public class Main extends Application {
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
 
-        lines.getChildren().add(rectangle);
+        gridLines.getChildren().add(rectangle);
     }
 
     private boolean shouldShowGridLine(int y) {
@@ -247,7 +244,7 @@ public class Main extends Application {
         Line line = new Line(startX, startY, endX, endY);
         line.setStroke(color);
         line.setStrokeWidth(0.5);
-        lines.getChildren().add(line);
+        gridLines.getChildren().add(line);
     }
 
     private Color chooseGridLineColor(int x) {

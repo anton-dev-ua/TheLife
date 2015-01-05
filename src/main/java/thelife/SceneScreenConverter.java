@@ -21,6 +21,13 @@ public class SceneScreenConverter {
     public SceneScreenConverter() {
     }
 
+    public SceneScreenConverter(double sceneWidth, double sceneHeight, double scale) {
+        this.sceneWidth = sceneWidth;
+        this.sceneHeight = sceneHeight;
+        this.sceneCellSize = scale;
+        rescale();
+    }
+
     void rescale() {
         sceneColumns = sceneWidth / sceneCellSize;
         sceneRows = sceneHeight / sceneCellSize;
