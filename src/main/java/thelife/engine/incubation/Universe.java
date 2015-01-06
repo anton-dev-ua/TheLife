@@ -1,9 +1,9 @@
-package thelife.engine;
+package thelife.engine.incubation;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static thelife.engine.Utils.aNeighborPoints;
+import static thelife.engine.incubation.Utils.aNeighborPoints;
 
 public class Universe {
     private Space space;

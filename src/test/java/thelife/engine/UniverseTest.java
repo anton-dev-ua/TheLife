@@ -38,4 +38,21 @@ public class UniverseTest {
 
     }
 
+    @Test
+    public void justRunRPentaminoEvolution(){
+        Space space = new Space();
+        Universe universe = new Universe(space);
+
+        space.setLifeAt(0, 2);
+        space.setLifeAt(1, 2);
+        space.setLifeAt(0, 1);
+        space.setLifeAt(-1, 1);
+        space.setLifeAt(0, 0);
+
+
+        for(int i = 0; i<1000; i++) {
+            universe.nextGeneration();
+        }
+    }
+
 }

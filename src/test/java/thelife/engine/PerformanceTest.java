@@ -47,6 +47,7 @@ public class PerformanceTest {
         public void accept(Result result) throws IOException {
             long avgTimeMillis = result.benchmarkTime / result.benchmarkRounds;
             long opPerSec = iterations * 1000 / avgTimeMillis;
+            System.out.println("op/s: " + opPerSec);
             assertThat(opPerSec).as(opPerSec + " evolution iterations per sec").isGreaterThan(10000);
         }
     }

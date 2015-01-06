@@ -1,4 +1,4 @@
-package thelife.engine;
+package thelife.engine.incubation;
 
 public class Point {
     int x;

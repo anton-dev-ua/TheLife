@@ -1,4 +1,4 @@
-package thelife.engine;
+package thelife.engine.incubation;
 
 import java.util.ArrayList;
 import java.util.List;

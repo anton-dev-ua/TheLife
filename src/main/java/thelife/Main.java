@@ -153,7 +153,7 @@ public class Main extends Application {
             while (simulate) {
                 universe.nextGeneration();
 
-                redraw();
+//                redraw();
 
                 Platform.runLater(() -> displayStatistics());
 
