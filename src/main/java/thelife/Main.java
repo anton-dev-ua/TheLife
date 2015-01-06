@@ -13,7 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import thelife.engine.Space;
-import thelife.engine.World;
+import thelife.engine.Universe;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -21,7 +21,7 @@ public class Main extends Application {
 
     private static final Color background = Color.WHITE;
 
-    private World world;
+    private Universe universe;
     private Space space;
     private boolean simulate;
     private Label generationText;
@@ -151,7 +151,7 @@ public class Main extends Application {
 
             simulate = true;
             while (simulate) {
-                world.nextGeneration();
+                universe.nextGeneration();
 
                 redraw();
 
@@ -167,20 +167,20 @@ public class Main extends Application {
     }
 
     private void displayStatistics() {
-        generationText.setText(String.valueOf(world.getGeneration()));
+        generationText.setText(String.valueOf(universe.getGeneration()));
         populationText.setText(String.valueOf(space.getAllAliveCells().size()));
     }
 
     private void initWorld() {
         space = new Space();
-        world = new World(space);
+        universe = new Universe(space);
 
         initialLife();
 
     }
 
     private void initialLife() {
-        world.clear();
+        universe.clear();
         space.setLifeAt(0, 2);
         space.setLifeAt(1, 2);
         space.setLifeAt(0, 1);

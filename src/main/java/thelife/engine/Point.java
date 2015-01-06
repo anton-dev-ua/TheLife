@@ -14,10 +14,10 @@ public class Point {
         if (this == o) return true;
         if (!(o instanceof Point)) return false;
 
-        Point cellKey = (Point) o;
+        Point anotherPoint = (Point) o;
 
-        if (x != cellKey.x) return false;
-        if (y != cellKey.y) return false;
+        if (x != anotherPoint.x) return false;
+        if (y != anotherPoint.y) return false;
 
         return true;
     }
@@ -31,10 +31,7 @@ public class Point {
 
     @Override
     public String toString() {
-        return "{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "{" + "x=" + x + ", y=" + y + '}';
     }
 
     public int getX() {
@@ -45,7 +42,7 @@ public class Point {
         return y;
     }
 
-    public Point add(Point neighborDelta) {
-        return new Point(x + neighborDelta.x, y + neighborDelta.y);
+    public Point add(Point another) {
+        return new Point(x + another.x, y + another.y);
     }
 }

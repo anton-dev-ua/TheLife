@@ -1,0 +1,38 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    jcenter() // repository from which JMH will be downloaded
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'me.champeau.gradle:jmh-gradle-plugin:0.1.3'
+    }
+}
+
+apply plugin: 'me.champeau.gradle.jmh'
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'com.carrotsearch:junit-benchmarks:0.7.2'
+    testCompile 'org.assertj:assertj-core:1.6.1'
+}
+
+tasks.jmh.dependsOn clean
+tasks.jmh.mustRunAfter clean
+
+jmh {
+}
+
+task perf(dependsOn: tasks.jmh) {
+    doLast {
+        println '--------------------------------------------------------------------------------------'
+        File result = file('build/reports/jmh/human.txt')
+        result.eachLine { println it}
+        println '--------------------------------------------------------------------------------------'
+    }
+}

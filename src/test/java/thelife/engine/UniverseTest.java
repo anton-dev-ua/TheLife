@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class WorldTest {
+public class UniverseTest {
 
 
     @Test
@@ -15,8 +15,8 @@ public class WorldTest {
         space.setLifeAt(1, 2);
         space.setLifeAt(1, 3);
 
-        World world = new World(space);
-        world.nextGeneration();
+        Universe universe = new Universe(space);
+        universe.nextGeneration();
 
         assertThat(space.isLifeAt(new Point(0, 2)), is(true));
         assertThat(space.isLifeAt(new Point(2, 2)), is(true));
@@ -30,8 +30,8 @@ public class WorldTest {
         space.setLifeAt(1, 2);
         space.setLifeAt(1, 3);
 
-        World world = new World(space);
-        world.nextGeneration();
+        Universe universe = new Universe(space);
+        universe.nextGeneration();
 
         assertThat(space.isLifeAt(new Point(1, 1)), is(false));
         assertThat(space.isLifeAt(new Point(1, 3)), is(false));

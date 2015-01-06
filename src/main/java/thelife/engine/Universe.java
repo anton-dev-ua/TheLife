@@ -3,11 +3,13 @@ package thelife.engine;
 import java.util.HashSet;
 import java.util.Set;
 
-public class World {
+import static thelife.engine.Utils.aNeighborPoints;
+
+public class Universe {
     private Space space;
     private int generation = 0;
 
-    public World(Space space) {
+    public Universe(Space space) {
 
         this.space = space;
     }
@@ -44,17 +46,19 @@ public class World {
         Set<Point> toBorn = new HashSet<>();
 
         for (Point point : space.getAllAliveCells()) {
-            Utils.aNeighborPoints().forEach((neighborDelta) -> {
+            for (Point neighborDelta : aNeighborPoints()) {
                 Point neighbor = point.add(neighborDelta);
-                if (!space.isLifeAt(neighbor)) {
-                    if (3 == space.getAliveNeighborsCountAt(neighbor)) {
-                        toBorn.add(neighbor);
-                    }
+                if (space.noLifeAt(neighbor) && ruleToBorn(neighbor)) {
+                    toBorn.add(neighbor);
                 }
-            });
+            }
         }
 
         return toBorn;
+    }
+
+    private boolean ruleToBorn(Point neighbor) {
+        return 3 == space.getAliveNeighborsCountAt(neighbor);
     }
 
     public int getGeneration() {
