@@ -1,5 +1,7 @@
 package thelife;
 
+import thelife.engine.Point;
+
 import java.util.stream.IntStream;
 
 public class SceneScreenConverter {

@@ -1,9 +1,7 @@
-package thelife;
+package thelife.engine;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static thelife.Utils.aNeighborPoints;
 
 public class World {
     private Space space;
@@ -46,7 +44,7 @@ public class World {
         Set<Point> toBorn = new HashSet<>();
 
         for (Point point : space.getAllAliveCells()) {
-            aNeighborPoints().forEach((neighborDelta) -> {
+            Utils.aNeighborPoints().forEach((neighborDelta) -> {
                 Point neighbor = point.add(neighborDelta);
                 if (!space.isLifeAt(neighbor)) {
                     if (3 == space.getAliveNeighborsCountAt(neighbor)) {

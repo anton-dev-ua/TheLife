@@ -2,6 +2,8 @@ package thelife;
 
 import org.junit.Before;
 import org.junit.Test;
+import thelife.engine.Point;
+import thelife.engine.Space;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

@@ -1,4 +1,4 @@
-package thelife;
+package thelife.engine;
 
 public class Point {
     int x;

@@ -1,10 +1,10 @@
-package thelife;
+package thelife.engine;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static thelife.Utils.aNeighborPoints;
+import static thelife.engine.Utils.aNeighborPoints;
 
 public class Space {
 

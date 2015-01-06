@@ -12,6 +12,8 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import thelife.engine.Space;
+import thelife.engine.World;
 
 import java.util.concurrent.CountDownLatch;
 

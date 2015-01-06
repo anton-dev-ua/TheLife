@@ -1,6 +1,9 @@
 package thelife;
 
 import org.junit.Test;
+import thelife.engine.Point;
+import thelife.engine.Space;
+import thelife.engine.World;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
