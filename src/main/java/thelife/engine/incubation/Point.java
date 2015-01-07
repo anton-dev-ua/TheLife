@@ -1,12 +1,15 @@
 package thelife.engine.incubation;
 
 public class Point {
-    int x;
-    int y;
+    private int x;
+    private int y;
+    private int hashCode;
 
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
+        hashCode = x;
+        hashCode = (hashCode << 6) + y;
     }
 
     @Override
@@ -24,22 +27,12 @@ public class Point {
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = (result << 6) + y;
-        return result;
+        return hashCode;
     }
 
     @Override
     public String toString() {
         return "{" + "x=" + x + ", y=" + y + '}';
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public Point add(Point another) {

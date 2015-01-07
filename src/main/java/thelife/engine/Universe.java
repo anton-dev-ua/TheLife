@@ -3,8 +3,6 @@ package thelife.engine;
 import java.util.HashSet;
 import java.util.Set;
 
-import static thelife.engine.Utils.aNeighborPoints;
-
 public class Universe {
     private Space space;
     private int generation = 0;
@@ -18,13 +16,8 @@ public class Universe {
         Set<Point> toBorn = findCellsToBorn();
         Set<Point> toDie = findCellsToDie();
 
-        for (Point cellKey : toBorn) {
-            space.setLifeAt(cellKey.getX(), cellKey.getY());
-        }
-
-        for (Point cellKey : toDie) {
-            space.removeLifeAt(cellKey.getX(), cellKey.getY());
-        }
+        toBorn.forEach(space::setLifeAt);
+        toDie.forEach(space::removeLifeAt);
 
         generation++;
     }
@@ -50,7 +43,7 @@ public class Universe {
         Set<Point> toBorn = new HashSet<>();
 
         for (Point point : space.getAllAliveCells()) {
-            for (Point neighborDelta : aNeighborPoints()) {
+            for (Point neighborDelta : Utils.aNeighborPoints()) {
                 Point neighbor = point.add(neighborDelta);
                 if (space.noLifeAt(neighbor) && ruleToBorn(neighbor)) {
                     toBorn.add(neighbor);

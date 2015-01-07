@@ -12,6 +12,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import thelife.engine.Point;
 import thelife.engine.Space;
 import thelife.engine.Universe;
 
@@ -181,11 +182,11 @@ public class Main extends Application {
 
     private void initialLife() {
         universe.clear();
-        space.setLifeAt(0, 2);
-        space.setLifeAt(1, 2);
-        space.setLifeAt(0, 1);
-        space.setLifeAt(-1, 1);
-        space.setLifeAt(0, 0);
+        space.setLifeAt(new Point(0, 2));
+        space.setLifeAt(new Point(1, 2));
+        space.setLifeAt(new Point(0, 1));
+        space.setLifeAt(new Point(-1, 1));
+        space.setLifeAt(new Point(0, 0));
     }
 
     private void reset() {

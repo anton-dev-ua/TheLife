@@ -1,22 +1,18 @@
 package thelife.engine;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
-
-import static java.lang.Boolean.TRUE;
-import static thelife.engine.Utils.aNeighborPoints;
 
 public class Space {
 
-    private Map<Point, Boolean> field = new HashMap<>();
+    private Set<Point> field = new HashSet<>();
 
-    public void setLifeAt(int x, int y) {
-        field.put(new Point(x, y), TRUE);
+    public void setLifeAt(Point point) {
+        field.add(point);
     }
 
     public boolean isLifeAt(Point point) {
-        return field.get(point) == TRUE;
+        return field.contains(point);
     }
 
     public boolean noLifeAt(Point point) {
@@ -25,7 +21,7 @@ public class Space {
 
     public int getAliveNeighborsCountAt(Point point) {
         int count = 0;
-        for (Point neighborDelta : aNeighborPoints()) {
+        for (Point neighborDelta : Utils.aNeighborPoints()) {
             if (isLifeAt(point.add(neighborDelta))) {
                 count++;
             }
@@ -33,12 +29,12 @@ public class Space {
         return count;
     }
 
-    public void removeLifeAt(int x, int y) {
-        field.remove(new Point(x, y));
+    public void removeLifeAt(Point point) {
+        field.remove(point);
     }
 
     public Set<Point> getAllAliveCells() {
-        return field.keySet();
+        return field;
     }
 
     public void clear() {

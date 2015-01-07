@@ -11,9 +11,9 @@ public class UniverseTest {
     @Test
     public void addsLifeToFertileCell() {
         Space space = new Space();
-        space.setLifeAt(1, 1);
-        space.setLifeAt(1, 2);
-        space.setLifeAt(1, 3);
+        space.setLifeAt(new Point(1, 1));
+        space.setLifeAt(new Point(1, 2));
+        space.setLifeAt(new Point(1, 3));
 
         Universe universe = new Universe(space);
         universe.nextGeneration();
@@ -26,9 +26,9 @@ public class UniverseTest {
     @Test
     public void removeLifeFrom() {
         Space space = new Space();
-        space.setLifeAt(1, 1);
-        space.setLifeAt(1, 2);
-        space.setLifeAt(1, 3);
+        space.setLifeAt(new Point(1, 1));
+        space.setLifeAt(new Point(1, 2));
+        space.setLifeAt(new Point(1, 3));
 
         Universe universe = new Universe(space);
         universe.nextGeneration();
@@ -43,11 +43,11 @@ public class UniverseTest {
         Space space = new Space();
         Universe universe = new Universe(space);
 
-        space.setLifeAt(0, 2);
-        space.setLifeAt(1, 2);
-        space.setLifeAt(0, 1);
-        space.setLifeAt(-1, 1);
-        space.setLifeAt(0, 0);
+        space.setLifeAt(new Point(0, 2));
+        space.setLifeAt(new Point(1, 2));
+        space.setLifeAt(new Point(0, 1));
+        space.setLifeAt(new Point(-1, 1));
+        space.setLifeAt(new Point(0, 0));
 
 
         for(int i = 0; i<1000; i++) {

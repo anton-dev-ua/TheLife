@@ -18,13 +18,8 @@ public class Universe {
         Set<Point> toBorn = findCellsToBorn();
         Set<Point> toDie = findCellsToDie();
 
-        for (Point cellKey : toBorn) {
-            space.setLifeAt(cellKey.getX(), cellKey.getY());
-        }
-
-        for (Point cellKey : toDie) {
-            space.removeLifeAt(cellKey.getX(), cellKey.getY());
-        }
+        toBorn.forEach(space::setLifeAt);
+        toDie.forEach(space::removeLifeAt);
 
         generation++;
     }

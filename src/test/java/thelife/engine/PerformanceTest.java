@@ -25,11 +25,11 @@ public class PerformanceTest {
         space = new Space();
         universe = new Universe(space);
 
-        space.setLifeAt(0, 2);
-        space.setLifeAt(1, 2);
-        space.setLifeAt(0, 1);
-        space.setLifeAt(-1, 1);
-        space.setLifeAt(0, 0);
+        space.setLifeAt(new Point(0, 2));
+        space.setLifeAt(new Point(1, 2));
+        space.setLifeAt(new Point(0, 1));
+        space.setLifeAt(new Point(-1, 1));
+        space.setLifeAt(new Point(0, 0));
     }
 
 
