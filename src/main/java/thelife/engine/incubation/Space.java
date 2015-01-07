@@ -9,6 +9,13 @@ public class Space {
 
     private Set<Point> field = new HashSet<>();
 
+    public Space() {
+    }
+
+    public Space(Set<Point> field) {
+        this.field.addAll(field);
+    }
+
     public void setLifeAt(Point point) {
         field.add(point);
     }

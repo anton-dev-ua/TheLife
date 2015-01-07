@@ -8,9 +8,9 @@ import static thelife.engine.incubation.Utils.aNeighborPoints;
 public class Universe {
     private Space space;
     private int generation = 0;
+    private Set<Point> nextCellsToCheck;
 
     public Universe(Space space) {
-
         this.space = space;
     }
 
@@ -18,16 +18,26 @@ public class Universe {
         Set<Point> toBorn = findCellsToBorn();
         Set<Point> toDie = findCellsToDie();
 
+        setNextCellsToCheck(toBorn, toDie);
+
         toBorn.forEach(space::setLifeAt);
         toDie.forEach(space::removeLifeAt);
 
         generation++;
     }
 
+    private void setNextCellsToCheck(Set<Point> toBorn, Set<Point> toDie) {
+        nextCellsToCheck = new HashSet<>();
+        nextCellsToCheck.addAll(toBorn);
+        nextCellsToCheck.addAll(toDie);
+    }
+
     private Set<Point> findCellsToDie() {
         Set<Point> toDie = new HashSet<>();
 
-        for (Point point : space.getAllAliveCells()) {
+        Set<Point> cellsToCheck = space.getAllAliveCells();
+
+        for (Point point : cellsToCheck) {
             int aliveNeighbors = space.getAliveNeighborsCountAt(point);
             if (ruleToDie(aliveNeighbors)) {
                 toDie.add(point);
@@ -44,7 +54,7 @@ public class Universe {
     private Set<Point> findCellsToBorn() {
         Set<Point> toBorn = new HashSet<>();
 
-        for (Point point : space.getAllAliveCells()) {
+        for (Point point : getCellsToCheck()) {
             for (Point neighborDelta : aNeighborPoints()) {
                 Point neighbor = point.add(neighborDelta);
                 if (space.noLifeAt(neighbor) && ruleToBorn(neighbor)) {
@@ -54,6 +64,10 @@ public class Universe {
         }
 
         return toBorn;
+    }
+
+    private Set<Point> getCellsToCheck() {
+        return generation > 0 ? nextCellsToCheck : space.getAllAliveCells();
     }
 
     private boolean ruleToBorn(Point neighbor) {

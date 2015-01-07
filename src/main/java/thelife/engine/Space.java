@@ -3,9 +3,18 @@ package thelife.engine;
 import java.util.HashSet;
 import java.util.Set;
 
+import static thelife.engine.Utils.aNeighborPoints;
+
 public class Space {
 
     private Set<Point> field = new HashSet<>();
+
+    public Space() {
+    }
+
+    public Space(Set<Point> field) {
+        this.field.addAll(field);
+    }
 
     public void setLifeAt(Point point) {
         field.add(point);
@@ -21,7 +30,7 @@ public class Space {
 
     public int getAliveNeighborsCountAt(Point point) {
         int count = 0;
-        for (Point neighborDelta : Utils.aNeighborPoints()) {
+        for (Point neighborDelta : aNeighborPoints()) {
             if (isLifeAt(point.add(neighborDelta))) {
                 count++;
             }

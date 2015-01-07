@@ -8,15 +8,15 @@ import thelife.engine.Universe;
 import java.util.concurrent.TimeUnit;
 
 
-@Fork(1)
+@Fork(3)
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)
 @OperationsPerInvocation(PerformanceTest.iterations)
-@Warmup(iterations = 3, time = 1, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.MILLISECONDS)
 public class PerformanceTest {
 
-    public static final int iterations = 10000;
+    public static final int iterations = 1000;
 
     @State(Scope.Thread)
     public static class TestUniverse {
