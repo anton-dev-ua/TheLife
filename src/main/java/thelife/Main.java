@@ -154,7 +154,7 @@ public class Main extends Application {
             while (simulate) {
                 universe.nextGeneration();
 
-//                redraw();
+                redraw();
 
                 Platform.runLater(() -> displayStatistics());
 
@@ -192,6 +192,7 @@ public class Main extends Application {
     private void reset() {
         initialLife();
         sceneVisualizer.displayLife();
+        displayStatistics();
     }
 
     private void redraw() {
