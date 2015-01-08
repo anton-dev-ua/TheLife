@@ -83,4 +83,19 @@ public class SpaceTest {
 
     }
 
+    @Test
+    public void setsTrueForLifeInCenter() throws Exception {
+        space.setLifeAt(new Point(0, 0));
+
+        assertThat(space.getTiles().get(new Point(0, 0)).isLifeInCenter()).isTrue();
+    }
+
+    @Test
+    public void setsFalseForLifeInCenter() throws Exception {
+        space.setLifeAt(new Point(0, 0));
+        space.setLifeAt(new Point(1, 0));
+        space.removeLifeAt(new Point(0, 0));
+
+        assertThat(space.getTiles().get(new Point(0, 0)).noLifeInCenter()).isTrue();
+    }
 }

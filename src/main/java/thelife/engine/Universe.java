@@ -15,13 +15,13 @@ public class Universe {
         Set<Point> toBorn = new HashSet<>();
         Set<Point> toDie = new HashSet<>();
 
-        space.getTiles().forEach((point, lifeCounter) -> {
-            if (lifeCounter.getLifeCount() == 3) {
-                if (space.noLifeAt(point)) {
+        space.getTiles().forEach((point, tile) -> {
+            if (tile.getLifeCount() == 3) {
+                if (tile.noLifeInCenter()) {
                     toBorn.add(point);
                 }
-            } else if (lifeCounter.getLifeCount() != 4) {
-                if (space.isLifeAt(point)) {
+            } else if (tile.getLifeCount() != 4) {
+                if (tile.isLifeInCenter()) {
                     toDie.add(point);
                 }
             }

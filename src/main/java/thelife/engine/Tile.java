@@ -2,6 +2,7 @@ package thelife.engine;
 
 public class Tile {
     private int lifeCount = 0;
+    private boolean lifeInCenter;
 
     public void inc() {
         lifeCount++;
@@ -20,5 +21,17 @@ public class Tile {
         return "Tile{" +
                 "lives=" + lifeCount +
                 '}';
+    }
+
+    public void setLifeInCenter(boolean lifeInCenter) {
+        this.lifeInCenter = lifeInCenter;
+    }
+
+    public boolean isLifeInCenter() {
+        return lifeInCenter;
+    }
+
+    public boolean noLifeInCenter() {
+        return !lifeInCenter;
     }
 }

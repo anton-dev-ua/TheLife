@@ -1,13 +1,9 @@
 package thelife.engine;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Space {
 
-    private Set<Point> field = new HashSet<>();
     private Map<Point, Tile> tiles = new HashMap<>();
 
     public Space() {
@@ -18,29 +14,44 @@ public class Space {
     }
 
     public void setLifeAt(Point point) {
-        field.add(point);
-        incLifeInTile(point);
+        incLifeInTileCenter(point);
         for (Point p : point.getNeighbors()) {
             incLifeInTile(p);
         }
     }
 
+    private void incLifeInTileCenter(Point point) {
+        Tile tile = getTile(point);
+        tile.setLifeInCenter(true);
+        tile.inc();
+    }
+
     public void removeLifeAt(Point point) {
-        field.remove(point);
-        decLifeInTile(point);
+        decLifeInTileCenter(point);
         for (Point p : point.getNeighbors()) {
             decLifeInTile(p);
         }
     }
 
+    private void decLifeInTileCenter(Point point) {
+        Tile tile = getTile(point);
+        tile.dec();
+        if (tile.getLifeCount() == 0) {
+            tiles.remove(point);
+        } else {
+            tile.setLifeInCenter(false);
+        }
+    }
+
     private void incLifeInTile(Point point) {
-        getTile(point).inc();
+        Tile tile = getTile(point);
+        tile.inc();
     }
 
     private void decLifeInTile(Point point) {
         Tile tile = getTile(point);
         tile.dec();
-        if(tile.getLifeCount() == 0) {
+        if (tile.getLifeCount() == 0) {
             tiles.remove(point);
         }
     }
@@ -55,19 +66,27 @@ public class Space {
     }
 
     public boolean isLifeAt(Point point) {
-        return field.contains(point);
+        Tile tile = tiles.get(point);
+        return tile != null && tile.isLifeInCenter();
     }
 
     public boolean noLifeAt(Point point) {
         return !isLifeAt(point);
     }
 
-    public Set<Point> getAllAliveCells() {
-        return field;
+    public Collection<Point> getAllAliveCells() {
+        Set<Point> lives = new HashSet<>();
+        tiles.forEach((point, tile) -> {
+            if (tile.isLifeInCenter()) {
+                lives.add(point);
+            }
+        });
+
+        return lives;
     }
 
     public void clear() {
-        field.clear();
+        tiles.clear();
     }
 
     public Map<Point, Tile> getTiles() {
