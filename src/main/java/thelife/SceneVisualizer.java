@@ -8,7 +8,7 @@ import javafx.scene.shape.Shape;
 import thelife.engine.Point;
 import thelife.engine.Space;
 
-import java.util.Set;
+import java.util.Collection;
 
 public class SceneVisualizer {
     private static final Color gridColor = Color.LIGHTGRAY;
@@ -73,7 +73,7 @@ public class SceneVisualizer {
     }
 
     public void displayLife() {
-        Set<Point> allAliveCells = space.getAllAliveCells();
+        Collection<Point> allAliveCells = space.getAllAliveCells();
         sceneCells.getChildren().clear();
 
         allAliveCells.stream().filter(sceneScreen::isVisible).map(sceneScreen::toScreenRect).forEach(this::drawCell);
