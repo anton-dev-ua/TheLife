@@ -154,9 +154,10 @@ public class Main extends Application {
             while (simulate) {
                 universe.nextGeneration();
 
-                redraw();
-
-                Platform.runLater(() -> displayStatistics());
+                waitForDisplaying(() -> {
+                    sceneVisualizer.displayLife();
+                    displayStatistics();
+                });
 
                 delayer.delayIteration();
 
@@ -195,10 +196,10 @@ public class Main extends Application {
         displayStatistics();
     }
 
-    private void redraw() {
+    private void waitForDisplaying(Runnable operation) {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         Platform.runLater(() -> {
-            sceneVisualizer.displayLife();
+            operation.run();
             countDownLatch.countDown();
         });
         try {
