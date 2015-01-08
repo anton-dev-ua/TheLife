@@ -8,7 +8,7 @@ import thelife.engine.Universe;
 import java.util.concurrent.TimeUnit;
 
 
-@Fork(3)
+@Fork(1)
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)
 @OperationsPerInvocation(PerformanceTest.iterations)
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.MILLISECONDS)
 public class PerformanceTest {
 
-    public static final int iterations = 1000;
+    public static final int iterations = 10000;
 
     @State(Scope.Thread)
     public static class TestUniverse {

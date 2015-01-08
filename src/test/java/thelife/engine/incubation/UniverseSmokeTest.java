@@ -17,19 +17,28 @@ public class UniverseSmokeTest {
         Space space = new Space(initialState);
         Universe universe = new Universe(space);
 
-        assertThat(space.getAllAliveCells()).isEqualTo(initialState);
+        assertThat(space.getAllAliveCells()).as("initial state").isEqualTo(initialState);
 
         universe.nextGeneration();
-        assertThat(space.getAllAliveCells()).as("generation 1").isEqualTo(rleParser.parse("Pos=-1,-1 2o$o$3o!"));
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-1,-1 2o$o$3o!"));
 
         universe.nextGeneration();
-        assertThat(space.getAllAliveCells()).as("generation 2").isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$b2o$2bo!"));
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$b2o$2bo!"));
 
         universe.nextGeneration();
-        assertThat(space.getAllAliveCells()).as("generation 3").isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$b3o$b2o!"));
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$b3o$b2o!"));
 
         universe.nextGeneration();
-        assertThat(space.getAllAliveCells()).as("generation 4").isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$o2bo$bobo!"));
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$o2bo$bobo!"));
+
+        universe.nextGeneration();
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2bo$2ob2o$2bo!"));
+
+        universe.nextGeneration();
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-2,-1 b2o$o2b2o$2ob2o$b3o!"));
+
+        universe.nextGeneration();
+        assertThat(space.getAllAliveCells()).as("generation "+universe.getGeneration()).isEqualTo(rleParser.parse("Pos=-2,-1 b3o$o3bo$o$2ob2o$2bo!"));
 
     }
 }
