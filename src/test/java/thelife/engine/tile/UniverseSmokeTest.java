@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.tile;
 
 import org.junit.Test;
 import thelife.engine.Point;
@@ -33,6 +33,15 @@ public class UniverseSmokeTest {
                     .containsAll(generations.get(gen));
         }
 
+//        universe.setState(initialState);
+//        for (int i = 0; i < 1200; i++) {
+//            universe.nextGeneration();
+//            String rle = new RleFormatter().format(universe.getAllAliveCells());
+//            String out = "generations.add(rleParser.parse(\"" + rle + "\"));";
+//            System.out.println(out);
+//            Thread.sleep(10);
+//
+//        }
     }
 
     private List<Collection<Point>> expectedGenerations() {

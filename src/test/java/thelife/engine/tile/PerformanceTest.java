@@ -1,10 +1,11 @@
-package thelife.engine;
+package thelife.engine.tile;
 
 import com.carrotsearch.junitbenchmarks.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import thelife.engine.RleParser;
 
 import java.io.IOException;
 
@@ -16,20 +17,13 @@ public class PerformanceTest {
     @Rule
     public TestRule benchmarkRun = new BenchmarkRule(new WriterConsumer(), new ResultAsserter());
 
-    private Space space;
-    private Universe universe;
+    private thelife.engine.Universe universe;
     private static int iterations = 10000;
 
     @Before
     public void setUp() {
-        space = new Space();
-        universe = new Universe(space);
-
-        space.setLifeAt(new Point(0, 2));
-        space.setLifeAt(new Point(1, 2));
-        space.setLifeAt(new Point(0, 1));
-        space.setLifeAt(new Point(-1, 1));
-        space.setLifeAt(new Point(0, 0));
+        universe = new Universe();
+        universe.setState(new RleParser().parse("Pos=-1,-1 bo$2o$b2o!"));
     }
 
 

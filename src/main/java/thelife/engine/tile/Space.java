@@ -1,4 +1,6 @@
-package thelife.engine;
+package thelife.engine.tile;
+
+import thelife.engine.Point;
 
 import java.util.*;
 
@@ -92,5 +94,4 @@ public class Space {
     public Map<Point, Tile> getTiles() {
         return tiles;
     }
-
 }

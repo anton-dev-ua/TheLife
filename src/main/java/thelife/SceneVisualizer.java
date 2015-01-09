@@ -6,7 +6,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import thelife.engine.Point;
-import thelife.engine.Space;
+import thelife.engine.Universe;
 
 import java.util.Collection;
 
@@ -18,10 +18,10 @@ public class SceneVisualizer {
     private SceneScreenConverter sceneScreen;
     private Group sceneCells;
     private Group gridLines;
-    private Space space;
+    private Universe universe;
 
-    public SceneVisualizer(Space space) {
-        this.space = space;
+    public SceneVisualizer(Universe universe) {
+        this.universe = universe;
         sceneScreen = new SceneScreenConverter(900, 600, 10);
     }
 
@@ -73,7 +73,7 @@ public class SceneVisualizer {
     }
 
     public void displayLife() {
-        Collection<Point> allAliveCells = space.getAllAliveCells();
+        Collection<? extends Point> allAliveCells = universe.getAllAliveCells();
         sceneCells.getChildren().clear();
 
         allAliveCells.stream().filter(sceneScreen::isVisible).map(sceneScreen::toScreenRect).forEach(this::drawCell);

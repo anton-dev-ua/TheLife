@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.tile;
 
 import org.junit.Before;
 import org.junit.Test;

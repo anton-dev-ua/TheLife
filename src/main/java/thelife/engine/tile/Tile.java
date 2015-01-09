@@ -1,4 +1,4 @@
-package thelife.engine;
+package thelife.engine.tile;
 
 public class Tile {
     private int lifeCount = 0;
@@ -18,8 +18,9 @@ public class Tile {
 
     @Override
     public String toString() {
-        return "Tile{" +
-                "lives=" + lifeCount +
+        return "{" +
+                "l=" + lifeCount +
+                ", c=" + lifeInCenter +
                 '}';
     }
 

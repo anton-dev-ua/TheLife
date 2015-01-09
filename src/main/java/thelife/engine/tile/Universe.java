@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.tile;
 
 import thelife.engine.Point;
 
@@ -21,6 +21,7 @@ public class Universe implements thelife.engine.Universe {
         Set<Point> toDie = new HashSet<>();
 
         Map<Point, Tile> tiles = space.getTiles();
+//        System.out.printf("%6s: %s\n", generation+1, tiles);
 
         tiles.forEach((point, tile) -> {
             if (tile.getLifeCount() == 3) {

@@ -3,15 +3,15 @@ package thelife.engine;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RleParserTest {
 
 
-    private Set<Point> expected;
+    private Collection<Point> expected;
     private RleParser rleParser;
 
     @Before
@@ -29,7 +29,7 @@ public class RleParserTest {
         addPoint(0, 1);
         addPoint(1, 1);
 
-        Set<Point> cells = rleParser.parse("Pos=-1,-1 bo$2o$b2o!");
+        Collection<Point> cells = rleParser.parse("Pos=-1,-1 bo$2o$b2o!");
 
         assertThat(cells).isEqualTo(expected);
 
@@ -41,7 +41,7 @@ public class RleParserTest {
         addPoint(0, -4);
         addPoint(0, 1);
 
-        Set<Point> cells = rleParser.parse("Pos=-1,-4 bo5$bo!");
+        Collection<Point> cells = rleParser.parse("Pos=-1,-4 bo5$bo!");
 
         assertThat(cells).isEqualTo(expected);
 
@@ -51,7 +51,16 @@ public class RleParserTest {
     public void parsesRlePatternWithLeadingEmptyLines() throws Exception {
         addPoint(0, 1);
 
-        Set<Point> cells = rleParser.parse("Pos=-1,-4 5$bo!");
+        Collection<Point> cells = rleParser.parse("Pos=-1,-4 5$bo!");
+
+        assertThat(cells).isEqualTo(expected);
+    }
+
+    @Test
+    public void parsesPositionWithSeveralDigits() throws Exception {
+        addPoint(-101, 4056);
+
+        Collection<Point> cells = rleParser.parse("Pos=-101,4056 o!");
 
         assertThat(cells).isEqualTo(expected);
     }

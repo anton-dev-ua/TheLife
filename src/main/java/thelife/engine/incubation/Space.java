@@ -1,5 +1,7 @@
 package thelife.engine.incubation;
 
+import thelife.engine.Point;
+
 import java.util.*;
 
 public class Space {
@@ -92,5 +94,4 @@ public class Space {
     public Map<Point, Tile> getTiles() {
         return tiles;
     }
-
 }

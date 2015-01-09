@@ -1,7 +1,8 @@
-package thelife.engine;
+package thelife.engine.tile;
 
 import org.junit.Before;
 import org.junit.Test;
+import thelife.engine.Point;
 
 import java.util.Map;
 

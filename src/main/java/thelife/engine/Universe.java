@@ -1,46 +1,15 @@
 package thelife.engine;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
-public class Universe {
-    private Space space;
-    private int generation = 0;
+public interface Universe {
+    void nextGeneration();
 
-    public Universe(Space space) {
-        this.space = space;
-    }
+    int getGeneration();
 
-    public void nextGeneration() {
-        Set<Point> toBorn = new HashSet<>();
-        Set<Point> toDie = new HashSet<>();
+    void clear();
 
-        space.getTiles().forEach((point, tile) -> {
-            if (tile.getLifeCount() == 3) {
-                if (tile.noLifeInCenter()) {
-                    toBorn.add(point);
-                }
-            } else if (tile.getLifeCount() != 4) {
-                if (tile.isLifeInCenter()) {
-                    toDie.add(point);
-                }
-            }
+    Collection<Point> getAllAliveCells();
 
-        });
-
-
-        toBorn.forEach(space::setLifeAt);
-        toDie.forEach(space::removeLifeAt);
-
-        generation++;
-    }
-
-    public int getGeneration() {
-        return generation;
-    }
-
-    public void clear() {
-        generation = 0;
-        space.clear();
-    }
+    void setState(Collection<Point> points);
 }

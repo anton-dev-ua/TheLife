@@ -6,21 +6,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RleParser {
+
+    public static final Pattern POSITION_PATTERN = Pattern.compile("Pos=(-?\\d+),(-?\\d+)");
+    public static final Pattern PATTERN_PATTERN = Pattern.compile("([bo\\d$]*)!");
+
     public Set<Point> parse(String rlePattern) {
 
         Set<Point> points = new HashSet<>();
 
-        Pattern positionPattern = Pattern.compile("Pos=(-?\\d),(-?\\d)");
-        Matcher positionMatcher = positionPattern.matcher(rlePattern);
-        if (positionMatcher.find()) {
-//            System.out.println("position = " + positionMatcher.group(1) + " " + positionMatcher.group(2));
-        }
+        Matcher positionMatcher = POSITION_PATTERN.matcher(rlePattern);
+        positionMatcher.find();
 
-        Pattern patternPattern = Pattern.compile("([bo\\d$]*)!");
-        Matcher patternMatcher = patternPattern.matcher(rlePattern);
-        if (patternMatcher.find()) {
-//            System.out.println("pattern = " + patternMatcher.group(1));
-        }
+        Matcher patternMatcher = PATTERN_PATTERN.matcher(rlePattern);
+        patternMatcher.find();
 
         int sx = Integer.valueOf(positionMatcher.group(1));
         int sy = Integer.valueOf(positionMatcher.group(2));

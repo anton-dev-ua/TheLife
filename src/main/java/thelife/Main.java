@@ -12,18 +12,18 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import thelife.engine.Point;
-import thelife.engine.Space;
-import thelife.engine.Universe;
+import thelife.engine.RleParser;
+import thelife.engine.UniverseFactory;
 
 import java.util.concurrent.CountDownLatch;
+
+import static thelife.engine.LifeAlgorithm.INCUBATION;
 
 public class Main extends Application {
 
     private static final Color background = Color.WHITE;
 
-    private Universe universe;
-    private Space space;
+    private thelife.engine.Universe universe;
     private boolean simulate;
     private Label generationText;
     private Label populationText;
@@ -39,7 +39,7 @@ public class Main extends Application {
 
         initWorld();
 
-        sceneVisualizer = new SceneVisualizer(space);
+        sceneVisualizer = new SceneVisualizer(universe);
 
         primaryStage.setTitle("The Life");
 
@@ -71,8 +71,13 @@ public class Main extends Application {
 
         addSeparator(topGroup);
 
+        addButton(topGroup, "Step", event -> {
+            universe.nextGeneration();
+            sceneVisualizer.displayLife();
+            displayStatistics();
+        });
         addButton(topGroup, "Run", event -> run());
-        addButton(topGroup, "Stop", event -> simulate = false);
+        addButton(topGroup, "Stop", event -> stopEmulation());
 
         addSeparator(topGroup);
 
@@ -85,6 +90,12 @@ public class Main extends Application {
         addButton(topGroup, "Speed -", event -> displayIterationDelay(iterationDelayIndex - 1));
 
         return topGroup;
+    }
+
+    private void stopEmulation() {
+        simulate = false;
+        displayStatistics();
+        sceneVisualizer.displayLife();
     }
 
     private void addButton(GridPane topGroup, String name, EventHandler<ActionEvent> action) {
@@ -170,12 +181,11 @@ public class Main extends Application {
 
     private void displayStatistics() {
         generationText.setText(String.valueOf(universe.getGeneration()));
-        populationText.setText(String.valueOf(space.getAllAliveCells().size()));
+        populationText.setText(String.valueOf(universe.getAllAliveCells().size()));
     }
 
     private void initWorld() {
-        space = new Space();
-        universe = new Universe(space);
+        universe = new UniverseFactory().createUniverse(INCUBATION);
 
         initialLife();
 
@@ -183,11 +193,7 @@ public class Main extends Application {
 
     private void initialLife() {
         universe.clear();
-        space.setLifeAt(new Point(0, 2));
-        space.setLifeAt(new Point(1, 2));
-        space.setLifeAt(new Point(0, 1));
-        space.setLifeAt(new Point(-1, 1));
-        space.setLifeAt(new Point(0, 0));
+        universe.setState(new RleParser().parse("Pos=-1,-1 bo$2o$b2o!"));
     }
 
     private void reset() {

@@ -18,8 +18,9 @@ public class Tile {
 
     @Override
     public String toString() {
-        return "Tile{" +
-                "lives=" + lifeCount +
+        return "{" +
+                "l=" + lifeCount +
+                ", c=" + lifeInCenter +
                 '}';
     }
 

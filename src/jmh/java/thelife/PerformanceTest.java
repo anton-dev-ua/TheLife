@@ -1,75 +1,83 @@
 package thelife;
 
 import org.openjdk.jmh.annotations.*;
-import thelife.engine.Point;
-import thelife.engine.Space;
+import thelife.engine.LifeAlgorithm;
+import thelife.engine.RleParser;
 import thelife.engine.Universe;
+import thelife.engine.UniverseFactory;
 
 import java.util.concurrent.TimeUnit;
 
 
-@Fork(1)
+@Fork(0)
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)
-@OperationsPerInvocation(PerformanceTest.iterations)
-@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 public class PerformanceTest {
 
-    public static final int iterations = 10000;
-
-    @State(Scope.Thread)
-    public static class TestUniverse {
+    @State(Scope.Benchmark)
+    public static class RPentamino {
         private Universe universe;
 
-        @Setup(Level.Invocation)
+        @Setup(Level.Iteration)
         public void setup() {
-            Space space;
-
-            space = new Space();
-            universe = new Universe(space);
-
-            space.setLifeAt(new Point(0, 2));
-            space.setLifeAt(new Point(1, 2));
-            space.setLifeAt(new Point(0, 1));
-            space.setLifeAt(new Point(-1, 1));
-            space.setLifeAt(new Point(0, 0));
+            universe = new UniverseFactory().createUniverse(LifeAlgorithm.TILE);
+            universe.setState(new RleParser().parse("Pos=-1,-1 bo$2o$b2o!"));
         }
     }
 
-    @State(Scope.Thread)
-    public static class TestIncubationUniverse {
-        private thelife.engine.incubation.Universe universe;
+    @State(Scope.Benchmark)
+    public static class RPentaminoIncubation {
+        private Universe universe;
 
-        @Setup(Level.Invocation)
+        @Setup(Level.Iteration)
         public void setup() {
-            thelife.engine.incubation.Space space;
+            universe = new UniverseFactory().createUniverse(LifeAlgorithm.INCUBATION);
+            universe.setState(new RleParser().parse("Pos=-1,-1 bo$2o$b2o!"));
+        }
+    }
 
-            space = new thelife.engine.incubation.Space();
-            universe = new thelife.engine.incubation.Universe(space);
+    @State(Scope.Benchmark)
+    public static class PufferTrain {
+        private Universe universe;
 
-            space.setLifeAt(new thelife.engine.incubation.Point(0, 2));
-            space.setLifeAt(new thelife.engine.incubation.Point(1, 2));
-            space.setLifeAt(new thelife.engine.incubation.Point(0, 1));
-            space.setLifeAt(new thelife.engine.incubation.Point(-1, 1));
-            space.setLifeAt(new thelife.engine.incubation.Point(0, 0));
+        @Setup(Level.Iteration)
+        public void setup() {
+            universe = new UniverseFactory().createUniverse(LifeAlgorithm.TILE);
+            universe.setState(new RleParser().parse("Pos=0,0 3bo$4bo$o3bo$b4o4$o$b2o$2bo$2bo$bo3$3bo$4bo$o3bo$b4o!"));
+        }
+    }
+
+    @State(Scope.Benchmark)
+    public static class PufferTrainIncubation {
+        private Universe universe;
+
+        @Setup(Level.Iteration)
+        public void setup() {
+            universe = new UniverseFactory().createUniverse(LifeAlgorithm.INCUBATION);
+            universe.setState(new RleParser().parse("Pos=0,0 3bo$4bo$o3bo$b4o4$o$b2o$2bo$2bo$bo3$3bo$4bo$o3bo$b4o!"));
         }
     }
 
     @Benchmark
-    public int rPentaminoEvolution(TestUniverse testUniverse) {
-        for (int i = 0; i < iterations; i++) {
-            testUniverse.universe.nextGeneration();
-        }
-        return  testUniverse.universe.getGeneration();
+    public void rPentaminoEvolution(RPentamino testUniverese) {
+        testUniverese.universe.nextGeneration();
     }
 
     @Benchmark
-    public int rPentaminoEvolutionIncubation(TestIncubationUniverse testUniverse) {
-        for (int i = 0; i < iterations; i++) {
-            testUniverse.universe.nextGeneration();
-        }
-        return  testUniverse.universe.getGeneration();
+    public void rPentaminoEvolutionIncubation(RPentaminoIncubation testUniverse) {
+        testUniverse.universe.nextGeneration();
+    }
+
+    @Benchmark
+    public void pufferTrainEvolution(PufferTrain RPentamino) {
+        RPentamino.universe.nextGeneration();
+    }
+
+    @Benchmark
+    public void pufferTrainEvolutionIncubation(PufferTrainIncubation testUniverse) {
+        testUniverse.universe.nextGeneration();
     }
 
 }
