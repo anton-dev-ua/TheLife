@@ -58,7 +58,7 @@ public class SceneVisualizer {
     }
 
     private void addVerticalGridLine(int y) {
-        addGridLine(0, sceneScreen.toScreenY(y), sceneScreen.getSceneWidth(), sceneScreen.toScreenY(y), chooseGridLineColor(y));
+        addGridLine(0, sceneScreen.toScreenY(y-1), sceneScreen.getSceneWidth(), sceneScreen.toScreenY(y-1), chooseGridLineColor(y));
     }
 
     private void addGridLine(double startX, double startY, double endX, double endY, Color color) {
