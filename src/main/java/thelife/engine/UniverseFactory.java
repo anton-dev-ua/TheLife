@@ -8,6 +8,8 @@ public class UniverseFactory {
                 return new thelife.engine.tile.Universe();
             case INCUBATION:
                 return new thelife.engine.incubation.Universe();
+            case TILE_V2:
+                return new thelife.engine.tile_v2.Universe();
         }
         return null;
     }

@@ -23,6 +23,10 @@ public class Main extends Application {
 
     private static final Color background = Color.WHITE;
 
+    public static final String R_PENTAMINO = "Pos=-1,-1 bo$2o$b2o!";
+    public static final String PUFFER_TRAIN = "Pos=0,0 3bo$4bo$o3bo$b4o4$o$b2o$2bo$2bo$bo3$3bo$4bo$o3bo$b4o!";
+
+
     private thelife.engine.Universe universe;
     private boolean simulate;
     private Label generationText;
@@ -193,7 +197,7 @@ public class Main extends Application {
 
     private void initialLife() {
         universe.clear();
-        universe.setState(new RleParser().parse("Pos=-1,-1 bo$2o$b2o!"));
+        universe.setState(new RleParser().parse(R_PENTAMINO));
     }
 
     private void reset() {

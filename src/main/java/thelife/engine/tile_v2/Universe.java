@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.tile_v2;
 
 import thelife.engine.Point;
 
