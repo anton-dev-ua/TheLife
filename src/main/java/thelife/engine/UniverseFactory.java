@@ -6,6 +6,8 @@ public class UniverseFactory {
         switch (lifeAlgorithm) {
             case TILE:
                 return new thelife.engine.tile.Universe();
+            case POINT:
+                return new thelife.engine.point_centric.Universe();
             case INCUBATION:
                 return new thelife.engine.incubation.Universe();
             case TILE_V2:

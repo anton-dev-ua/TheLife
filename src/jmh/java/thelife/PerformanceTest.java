@@ -32,7 +32,7 @@ public class PerformanceTest {
         @Param({"R_PENTAMINO", "PUFFER_TRAIN"})
         private String a_initialState;
 
-        @Param({"TILE", "TILE_V2", "INCUBATION"})
+        @Param({"POINT", "TILE", "TILE_V2", "INCUBATION"})
         private LifeAlgorithm b_algorithm;
 
         @Setup(Level.Iteration)

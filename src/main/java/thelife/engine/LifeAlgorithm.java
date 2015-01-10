@@ -1,5 +1,5 @@
 package thelife.engine;
 
 public enum LifeAlgorithm {
-    TILE, TILE_V2, INCUBATION
+    POINT, TILE, TILE_V2, INCUBATION
 }
