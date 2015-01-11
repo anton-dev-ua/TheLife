@@ -1,57 +1,17 @@
 package thelife.engine.incubation;
 
-import thelife.engine.Point;
 
-import java.util.Collection;
-import java.util.List;
+import java.math.BigInteger;
 
-public class Universe implements thelife.engine.Universe {
-    private Space space;
-    private int generation = 0;
+public class Universe extends CachedQuadTreeUniverse {
 
-    public Universe() {
-        this.space = new Space();
+    @Override
+    protected Block createInitialBlock() {
+        return HashLifeBlock.create(3);
     }
 
     @Override
-    public void nextGeneration() {
-        int evenOrOdd = generation % 2;
-
-        List<Tile> changedTiles = space.getChangedTiles();
-        changedTiles.forEach(tile -> {
-            if (tile.getChangedInGeneration(evenOrOdd) == 1) {
-                space.setLifeAt(tile.getPoint());
-            } else if (tile.getChangedInGeneration(evenOrOdd) == 2) {
-                space.removeLifeAt(tile.getPoint());
-            }
-
-            tile.setChangedInGeneration(evenOrOdd, 0);
-        });
-
-        changedTiles.clear();
-
-        generation++;
-    }
-
-    @Override
-    public int getGeneration() {
-        return generation;
-    }
-
-    @Override
-    public void clear() {
-        generation = 0;
-        space.clear();
-    }
-
-    @Override
-    public Collection<Point> getAllAliveCells() {
-        return space.getAllAliveCells();
-    }
-
-    @Override
-    public void setState(Collection<Point> state) {
-        space.clear();
-        state.forEach(space::setLifeAt);
+    protected BigInteger incGeneration(BigInteger generation, int level) {
+        return generation.add(BigInteger.valueOf(2).pow(level - 2));
     }
 }

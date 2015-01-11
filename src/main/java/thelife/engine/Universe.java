@@ -1,11 +1,12 @@
 package thelife.engine;
 
+import java.math.BigInteger;
 import java.util.Collection;
 
 public interface Universe {
     void nextGeneration();
 
-    int getGeneration();
+    BigInteger getGeneration();
 
     void clear();
 

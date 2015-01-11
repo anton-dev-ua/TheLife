@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
-@Fork(1)
+@Fork(value=1, jvmArgs = "-Xmx4G")
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)
-@Warmup(iterations = 1, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 3, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 3, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 public class PerformanceTest {
 
     public static Map<String, String> cellStates = new HashMap<>();
@@ -25,14 +25,16 @@ public class PerformanceTest {
     }
 
 
-    @State(Scope.Benchmark)
+    @State(Scope.Thread)
     public static class InitialState {
         private Universe universe;
 
         @Param({"R_PENTAMINO", "PUFFER_TRAIN"})
+//        @Param({"PUFFER_TRAIN"})
         private String a_initialState;
 
         @Param({"POINT", "TILE", "TILE_V2", "INCUBATION"})
+//        @Param({"INCUBATION"})
         private LifeAlgorithm b_algorithm;
 
         @Setup(Level.Iteration)

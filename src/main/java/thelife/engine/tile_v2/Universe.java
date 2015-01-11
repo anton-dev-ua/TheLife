@@ -2,12 +2,13 @@ package thelife.engine.tile_v2;
 
 import thelife.engine.Point;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
 public class Universe implements thelife.engine.Universe {
     private Space space;
-    private int generation = 0;
+    private long generation = 0;
 
     public Universe() {
         this.space = new Space();
@@ -15,7 +16,7 @@ public class Universe implements thelife.engine.Universe {
 
     @Override
     public void nextGeneration() {
-        int evenOrOdd = generation % 2;
+        int evenOrOdd = (int) (generation % 2);
 
         List<Tile> changedTiles = space.getChangedTiles();
         changedTiles.forEach(tile -> {
@@ -34,8 +35,8 @@ public class Universe implements thelife.engine.Universe {
     }
 
     @Override
-    public int getGeneration() {
-        return generation;
+    public BigInteger getGeneration() {
+        return BigInteger.valueOf(generation);
     }
 
     @Override

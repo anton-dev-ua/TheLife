@@ -2,6 +2,7 @@ package thelife.engine.point_centric;
 
 import thelife.engine.Point;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,7 @@ import static thelife.engine.Utils.aNeighborPoints;
 
 public class Universe implements thelife.engine.Universe {
     private Space space;
-    private int generation = 0;
+    private long generation = 0;
     private Set<Point> nextCellsToCheck;
 
     public Universe() {
@@ -77,8 +78,8 @@ public class Universe implements thelife.engine.Universe {
         return 3 == space.getAliveNeighborsCountAt(neighbor);
     }
 
-    public int getGeneration() {
-        return generation;
+    public BigInteger getGeneration() {
+        return BigInteger.valueOf(generation);
     }
 
     public void clear() {

@@ -25,18 +25,19 @@ public class UniverseTest {
 
     @Test
     public void addsLifeToFertileCell() {
-        thelife.engine.Universe universe = new Universe();
+        thelife.engine.Universe universe = new CachedQuadTreeUniverse();
         universe.setState(initialState);
 
         universe.nextGeneration();
 
+        System.out.println(universe.getAllAliveCells());
         assertThat(universe.getAllAliveCells()).contains(new Point(0, 2), new Point(2, 2));
 
     }
 
     @Test
     public void removeLifeFrom() {
-        thelife.engine.Universe universe = new Universe();
+        thelife.engine.Universe universe = new CachedQuadTreeUniverse();
         universe.setState(initialState);
 
         universe.nextGeneration();

@@ -2,6 +2,7 @@ package thelife.engine.tile;
 
 import thelife.engine.Point;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 public class Universe implements thelife.engine.Universe {
     private Space space;
-    private int generation = 0;
+    private long generation = 0;
 
     public Universe() {
         this.space = new Space();
@@ -44,8 +45,8 @@ public class Universe implements thelife.engine.Universe {
     }
 
     @Override
-    public int getGeneration() {
-        return generation;
+    public BigInteger getGeneration() {
+        return BigInteger.valueOf(generation);
     }
 
     @Override

@@ -17,7 +17,7 @@ import thelife.engine.UniverseFactory;
 
 import java.util.concurrent.CountDownLatch;
 
-import static thelife.engine.LifeAlgorithm.TILE;
+import static thelife.engine.LifeAlgorithm.INCUBATION;
 
 public class Main extends Application {
 
@@ -189,7 +189,7 @@ public class Main extends Application {
     }
 
     private void initWorld() {
-        universe = new UniverseFactory().createUniverse(TILE);
+        universe = new UniverseFactory().createUniverse(INCUBATION);
 
         initialLife();
 
