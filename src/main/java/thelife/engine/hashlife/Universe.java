@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.hashlife;
 
 
 import java.math.BigInteger;

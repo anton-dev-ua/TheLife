@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.hashlife;
 
 import thelife.engine.Point;
 
@@ -8,34 +8,13 @@ import java.util.Map;
 
 public class Block {
 
-    static Map<Block, Block> internCache = new HashMap<>();
+    private static Map<Block, Block> internCache = new HashMap<>();
 
     Block topLeft, topRight, bottomLeft, bottomRight;
     int level;
     private boolean alive = false;
     int population = 0;
     private Block cachedResult;
-    int index;
-
-    static Block leaf[] = {new Block(false), new Block(true)};
-    static Block block_l1[] = new Block[1 << 2 * 2];
-    static Block block_l2[] = new Block[1 << 4 * 4];
-
-    static {
-        for (int i = 0; i < block_l1.length; i++) {
-            block_l1[i] = new Block(1, leaf[(i & 8) >> 3], leaf[(i & 4) >> 2], leaf[(i & 2) >> 1], leaf[i & 1]);
-            block_l1[i].index = i;
-        }
-        for (int i = 0; i < block_l2.length; i++) {
-            int tl_i = (i >> 12);
-            int tr_i = (i >> 8) & 15;
-            int bl_i = (i >> 4) & 15;
-            int br_i = (i) & 15;
-            block_l2[i] = new Block(2, block_l1[tl_i], block_l1[tr_i], block_l1[bl_i], block_l1[br_i]);
-            block_l2[i].index = i;
-            block_l2[i].nextGen();
-        }
-    }
 
     Block(int aLevel) {
         level = aLevel;
@@ -45,7 +24,6 @@ public class Block {
             topRight = empty;
             bottomLeft = empty;
             bottomRight = empty;
-            index = empty.index<<16;
         }
     }
 
@@ -64,24 +42,15 @@ public class Block {
     }
 
     Block createBlock(int aLevel) {
-        if (aLevel == 0) return leaf[0];
-        if (aLevel == 1) return block_l1[0];
-        if (aLevel == 2) return block_l2[0];
         return new Block(aLevel).intern();
     }
 
     Block createBlock(int aLevel, Block topLeft, Block topRight, Block bottomLeft, Block bottomRight) {
-        if (aLevel == 1) {
-            return block_l1[(topLeft.population << 3) + (topRight.population << 2) + (bottomLeft.population << 1) + bottomRight.population];
-        }
-        if (aLevel == 2) {
-            return block_l2[(topLeft.index << 12) + (topRight.index << 8) + (bottomLeft.index << 4) + bottomRight.index];
-        }
         return new Block(aLevel, topLeft, topRight, bottomLeft, bottomRight).intern();
     }
 
     Block createBlock(boolean alive) {
-        return leaf[alive ? 1 : 0];
+        return new Block(alive).intern();
     }
 
     static Block create(int level) {
@@ -261,6 +230,10 @@ public class Block {
 
         Block block = (Block) o;
 
+        if (level != block.level) return false;
+
+        if (level == 0) return population == block.population;
+
         if (bottomLeft != block.bottomLeft) return false;
         if (bottomRight != block.bottomRight) return false;
         if (topLeft != block.topLeft) return false;
@@ -271,7 +244,7 @@ public class Block {
 
     @Override
     public int hashCode() {
-
+        if (level == 0) return population;
         return System.identityHashCode(topRight) +
                 11 * System.identityHashCode(topLeft) +
                 101 * System.identityHashCode(bottomRight) +
@@ -283,5 +256,9 @@ public class Block {
         return "{" +
                 "p=" + population +
                 '}';
+    }
+
+    public static int getInternalCacheSize() {
+        return internCache.size();
     }
 }

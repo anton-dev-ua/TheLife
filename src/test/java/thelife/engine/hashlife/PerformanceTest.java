@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.hashlife;
 
 import com.carrotsearch.junitbenchmarks.*;
 import org.junit.Before;
@@ -6,10 +6,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import thelife.engine.RleParser;
-import thelife.engine.Universe;
 
 import java.io.IOException;
 import java.math.BigInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class PerformanceTest {
@@ -22,7 +23,7 @@ public class PerformanceTest {
 
     @Before
     public void setUp() {
-        universe = new CachedQuadTreeUniverse();
+        universe = new Universe();
         universe.setState(new RleParser().parse("Pos=-1,-1 bo$2o$b2o!"));
     }
 
@@ -43,8 +44,8 @@ public class PerformanceTest {
         public void accept(Result result) throws IOException {
             long avgTimeMillis = result.benchmarkTime / result.benchmarkRounds;
             BigInteger opPerSec = iterations.multiply(BigInteger.valueOf(1000)).divide(BigInteger.valueOf(avgTimeMillis));
-            System.out.printf("op/s: %s (%s generations)", opPerSec, iterations);
-//            assertThat(opPerSec).as(opPerSec + " evolution iterations per sec").isGreaterThan(Big10000);
+            System.out.printf("op/s: %s\ngens: %s\n", opPerSec, iterations);
+            assertThat(opPerSec.compareTo(BigInteger.valueOf(1000000))).as(opPerSec + " evolutions iterations per sec").isEqualTo(1);
         }
     }
 

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.SECONDS)
 @BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 3, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 10, time = 2000, timeUnit = TimeUnit.MILLISECONDS)
 public class PerformanceTest {
 
     public static Map<String, String> cellStates = new HashMap<>();
@@ -29,12 +29,12 @@ public class PerformanceTest {
     public static class InitialState {
         private Universe universe;
 
-        @Param({"R_PENTAMINO", "PUFFER_TRAIN"})
-//        @Param({"PUFFER_TRAIN"})
+//        @Param({"R_PENTAMINO", "PUFFER_TRAIN"})
+        @Param({"PUFFER_TRAIN"})
         private String a_initialState;
 
-        @Param({"POINT", "TILE", "TILE_V2", "INCUBATION"})
-//        @Param({"INCUBATION"})
+//        @Param({"POINT", "TILE", "TILE_V2", "INCUBATION"})
+        @Param({"TILE_V2", "INCUBATION", "INCUBATION_V2"})
         private LifeAlgorithm b_algorithm;
 
         @Setup(Level.Iteration)

@@ -1,4 +1,4 @@
-package thelife.engine.incubation;
+package thelife.engine.hashlife;
 
 import org.junit.Test;
 import thelife.engine.Point;
@@ -27,39 +27,34 @@ public class UniverseSmokeTest {
 
         List<Collection<Point>> generations = expectedGenerations();
 
-//        thelife.engine.Universe universe = new Universe();
-        thelife.engine.Universe universe = new CachedQuadTreeUniverse();
+        thelife.engine.Universe universe = new Universe();
         universe.setState(initialState);
-
-//        Thread.sleep(5000);
 
         assertThat(universe.getAllAliveCells()).as("initial state").hasSameSizeAs(initialState).containsAll(initialState);
 
         long startTile = System.currentTimeMillis();
-        for (int i = 0; i < 50000; i++) {
+        while (universe.getGeneration().longValue() < generations.size()) {
             universe.nextGeneration();
 //            if(i%1000 == 0) System.out.println("done "+i);
 //            System.out.printf("%s, ",universe.getGeneration());
 
-//            int gen = (int)universe.getGeneration().longValue();
-//            if(gen == 1000) {
-////                System.out.println(gen + ", " + new RleFormatter().format(universe.getAllAliveCells()));
-//                if (gen < generations.size()) {
-//                    Collection<Point> allAliveCells = universe.getAllAliveCells();
-//                    assertThat(allAliveCells)
-//                            .as("generation " + gen)
-//                            .hasSameSizeAs(generations.get(gen - 1))
-//                            .containsAll(generations.get(gen - 1));
-//                }
-//            }
+            int gen = (int)universe.getGeneration().longValue();
+//                System.out.println(gen + ", " + new RleFormatter().format(universe.getAllAliveCells()));
+                if (gen < generations.size()) {
+                    Collection<Point> allAliveCells = universe.getAllAliveCells();
+                    assertThat(allAliveCells)
+                            .as("generation " + gen)
+                            .hasSameSizeAs(generations.get(gen - 1))
+                            .containsAll(generations.get(gen - 1));
+                }
         }
         System.out.println("\ngenerations:   " + universe.getGeneration());
-        System.out.println("cache size:    " + Block.internCache.size());
+        System.out.println("cache size:    " + Block.getInternalCacheSize());
 
         System.out.println();
 
         long spentTime = System.currentTimeMillis() - startTile;
-        System.out.printf("Spent time:         %,12d msec\n", spentTime);
+        System.out.printf("Spent time:         %,15d msec\n", spentTime);
 
         long usedMemoryAfter = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long usedByUniverse = usedMemoryAfter - usedMemoryBefore;
