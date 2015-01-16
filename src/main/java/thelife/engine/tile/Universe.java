@@ -65,4 +65,9 @@ public class Universe implements thelife.engine.Universe {
         space.clear();
         state.forEach(space::setLifeAt);
     }
+
+    @Override
+    public void addLife(Point point) {
+        space.setLifeAt(point);
+    }
 }

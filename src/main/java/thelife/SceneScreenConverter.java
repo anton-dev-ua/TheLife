@@ -84,7 +84,7 @@ public class SceneScreenConverter {
 
     public ScreenRectangle toScreenRect(Point point) {
         double screenX = toScreenX(point.getX());
-        double screenY = toScreenY(point.getY());
+        double screenY = toScreenY(point.getY()) - sceneCellSize;
         double width = getScale();
         double height = getScale();
 
@@ -110,6 +110,14 @@ public class SceneScreenConverter {
     }
 
     boolean isVisible(Point p) {
-        return p.getX() >= Math.floor(sceneLeft) && p.getX() < sceneRight && p.getY() > sceneBottom && p.getY() <= Math.ceil(sceneTop);
+        return p.getX() >= Math.floor(sceneLeft) && p.getX() < sceneRight && p.getY()+1 > sceneBottom && p.getY() <= Math.floor(sceneTop);
+    }
+
+    public int toUniverseX(double sx) {
+        return (int) Math.round(((sx - sceneCellSize/2 - fieldOffsetX) / sceneCellSize));
+    }
+
+    public int toUniverseY(double sy) {
+        return (int) Math.round(((fieldOffsetY - sy - sceneCellSize/2) / sceneCellSize));
     }
 }

@@ -19,17 +19,18 @@ public class SceneVisualizer {
     private Group sceneCells;
     private Group gridLines;
     private Universe universe;
+    private Group scene;
 
     public SceneVisualizer(Universe universe) {
         this.universe = universe;
-        sceneScreen = new SceneScreenConverter(900, 600, 10);
+        sceneScreen = new SceneScreenConverter(900, 600, 16);
     }
 
     public Group buildScenePane() {
         sceneCells = new Group();
         gridLines = new Group();
 
-        Group scene = new Group();
+        scene = new Group();
         scene.getChildren().addAll(sceneCells, gridLines);
 
         return scene;
@@ -37,12 +38,16 @@ public class SceneVisualizer {
 
 
     public void drawSceneGrid() {
+
+        Rectangle clip = new Rectangle(sceneScreen.getSceneWidth(),sceneScreen.getSceneHeight());
+        scene.setClip(clip);
+
         gridLines.getChildren().clear();
 
         sceneScreen.fieldColumns().filter(this::shouldShowGridLine).forEach(this::addHorizontalGridLine);
         sceneScreen.fieldRows().filter(this::shouldShowGridLine).forEach(this::addVerticalGridLine);
 
-        Rectangle rectangle = new Rectangle(0, 0, sceneScreen.getSceneWidth(), sceneScreen.getSceneHeight());
+        Rectangle rectangle = new Rectangle(0.5, 0.5, sceneScreen.getSceneWidth()-1, sceneScreen.getSceneHeight()-1);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
 
@@ -58,7 +63,7 @@ public class SceneVisualizer {
     }
 
     private void addVerticalGridLine(int y) {
-        addGridLine(0, sceneScreen.toScreenY(y-1), sceneScreen.getSceneWidth(), sceneScreen.toScreenY(y-1), chooseGridLineColor(y));
+        addGridLine(0, sceneScreen.toScreenY(y), sceneScreen.getSceneWidth(), sceneScreen.toScreenY(y), chooseGridLineColor(y));
     }
 
     private void addGridLine(double startX, double startY, double endX, double endY, Color color) {
@@ -112,5 +117,9 @@ public class SceneVisualizer {
     private void changeScale(double scale) {
         sceneScreen.changeScale(scale);
         redrawScene();
+    }
+
+    public SceneScreenConverter getSceneScreen() {
+        return sceneScreen;
     }
 }

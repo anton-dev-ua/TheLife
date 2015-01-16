@@ -5,19 +5,22 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import thelife.engine.Point;
 import thelife.engine.RleParser;
 import thelife.engine.UniverseFactory;
 
 import java.util.concurrent.CountDownLatch;
 
-import static thelife.engine.LifeAlgorithm.INCUBATION;
+import static thelife.engine.LifeAlgorithm.TILE;
 
 public class Main extends Application {
 
@@ -50,7 +53,22 @@ public class Main extends Application {
         GridPane mainGrid = createMainGrid();
 
         mainGrid.add(buildTopGroup(), 0, 0);
-        mainGrid.add(sceneVisualizer.buildScenePane(), 0, 1);
+
+        Group pane = sceneVisualizer.buildScenePane();
+        pane.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                event -> {
+                    double sx = event.getX();
+                    double sy = event.getY();
+                    int x = sceneVisualizer.getSceneScreen().toUniverseX(sx);
+                    int y = sceneVisualizer.getSceneScreen().toUniverseY(sy);
+                    System.out.println(x + ", " + y);
+
+                    universe.addLife(new Point(x, y));
+                    sceneVisualizer.displayLife();
+
+                });
+        mainGrid.add(pane, 0, 1);
+
         mainGrid.add(buildStatusBar(), 0, 2);
 
 
@@ -189,7 +207,7 @@ public class Main extends Application {
     }
 
     private void initWorld() {
-        universe = new UniverseFactory().createUniverse(INCUBATION);
+        universe = new UniverseFactory().createUniverse(TILE);
 
         initialLife();
 
@@ -197,6 +215,7 @@ public class Main extends Application {
 
     private void initialLife() {
         universe.clear();
+//        universe.setState(Arrays.asList(new Point(0,0)));//new RleParser().parse(R_PENTAMINO));
         universe.setState(new RleParser().parse(R_PENTAMINO));
     }
 
