@@ -27,7 +27,7 @@ public class SceneScreenConverter {
         rescale();
     }
 
-    private void rescale() {
+    public void rescale() {
         sceneColumns = sceneWidth / sceneCellSize;
         sceneRows = sceneHeight / sceneCellSize;
         sceneBottom = sceneCenterY - sceneRows / 2;
@@ -67,11 +67,11 @@ public class SceneScreenConverter {
     }
 
     public IntStream fieldColumns() {
-        return IntStream.rangeClosed((int) sceneLeft, (int) sceneRight);
+        return IntStream.rangeClosed((int)Math.ceil(sceneLeft), (int) Math.ceil(sceneRight));
     }
 
     public IntStream fieldRows() {
-        return IntStream.rangeClosed((int) sceneBottom, (int) sceneTop);
+        return IntStream.rangeClosed((int) Math.ceil(sceneBottom), (int) Math.floor(sceneTop));
     }
 
     public double toScreenX(int x) {
@@ -110,14 +110,22 @@ public class SceneScreenConverter {
     }
 
     boolean isVisible(Point p) {
-        return p.getX() >= Math.floor(sceneLeft) && p.getX() < sceneRight && p.getY()+1 > sceneBottom && p.getY() <= Math.floor(sceneTop);
+        return p.getX() >= Math.floor(sceneLeft) && p.getX() < sceneRight && p.getY() + 1 > sceneBottom && p.getY() <= Math.floor(sceneTop);
     }
 
     public int toUniverseX(double sx) {
-        return (int) Math.round(((sx - sceneCellSize/2 - fieldOffsetX) / sceneCellSize));
+        return (int) Math.round(((sx - sceneCellSize / 2 - fieldOffsetX) / sceneCellSize));
     }
 
     public int toUniverseY(double sy) {
-        return (int) Math.round(((fieldOffsetY - sy - sceneCellSize/2) / sceneCellSize));
+        return (int) Math.round(((fieldOffsetY - sy - sceneCellSize / 2) / sceneCellSize));
+    }
+
+    public void moveSceneCenterX(double sceneCenterX) {
+        this.sceneCenterX += sceneCenterX;
+    }
+
+    public void moveSceneCenterY(double sceneCenterY) {
+        this.sceneCenterY += sceneCenterY;
     }
 }

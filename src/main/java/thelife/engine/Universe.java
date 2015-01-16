@@ -19,4 +19,8 @@ public interface Universe {
     default void addLife(Point point) {
         throw new NotImplementedException();
     }
+
+    default void removeLife(Point point) {
+        throw new NotImplementedException();
+    }
 }

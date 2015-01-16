@@ -10,11 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import thelife.engine.Point;
 import thelife.engine.RleParser;
 import thelife.engine.UniverseFactory;
 
@@ -39,14 +37,15 @@ public class Main extends Application {
     private int iterationDelayIndex = 5;
     private long iterationDelays[] = {2000, 1000, 500, 250, 100, 50, 10, 0};
     private Delayer delayer;
-    private SceneVisualizer sceneVisualizer;
+    private SceneController sceneController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         initWorld();
 
-        sceneVisualizer = new SceneVisualizer(universe);
+        sceneController = new SceneController(universe);
+
 
         primaryStage.setTitle("The Life");
 
@@ -54,26 +53,14 @@ public class Main extends Application {
 
         mainGrid.add(buildTopGroup(), 0, 0);
 
-        Group pane = sceneVisualizer.buildScenePane();
-        pane.addEventHandler(MouseEvent.MOUSE_CLICKED,
-                event -> {
-                    double sx = event.getX();
-                    double sy = event.getY();
-                    int x = sceneVisualizer.getSceneScreen().toUniverseX(sx);
-                    int y = sceneVisualizer.getSceneScreen().toUniverseY(sy);
-                    System.out.println(x + ", " + y);
-
-                    universe.addLife(new Point(x, y));
-                    sceneVisualizer.displayLife();
-
-                });
+        Group pane = sceneController.getScenePane();
         mainGrid.add(pane, 0, 1);
 
         mainGrid.add(buildStatusBar(), 0, 2);
 
 
         displayIterationDelay(5);
-        sceneVisualizer.redrawScene();
+        sceneController.redrawScene();
         displayStatistics();
 
         primaryStage.setScene(new Scene(mainGrid, background));
@@ -95,7 +82,7 @@ public class Main extends Application {
 
         addButton(topGroup, "Step", event -> {
             universe.nextGeneration();
-            sceneVisualizer.displayLife();
+            sceneController.redrawScene();
             displayStatistics();
         });
         addButton(topGroup, "Run", event -> run());
@@ -103,8 +90,8 @@ public class Main extends Application {
 
         addSeparator(topGroup);
 
-        addButton(topGroup, "Zoom in", event -> sceneVisualizer.zoomIn());
-        addButton(topGroup, "Zoom out", event -> sceneVisualizer.zoomOut());
+        addButton(topGroup, "Zoom in", event -> sceneController.zoomIn());
+        addButton(topGroup, "Zoom out", event -> sceneController.zoomOut());
 
         addSeparator(topGroup);
 
@@ -117,7 +104,7 @@ public class Main extends Application {
     private void stopEmulation() {
         simulate = false;
         displayStatistics();
-        sceneVisualizer.displayLife();
+        sceneController.redrawScene();
     }
 
     private void addButton(GridPane topGroup, String name, EventHandler<ActionEvent> action) {
@@ -150,10 +137,10 @@ public class Main extends Application {
 
     private void handleStageEvents(Stage primaryStage) {
         primaryStage.widthProperty().addListener((observable, oldValue, newValue) ->
-                sceneVisualizer.changeWidthFor(newValue.doubleValue() - oldValue.doubleValue()));
+                sceneController.changeWidthFor(oldValue, newValue));
 
         primaryStage.heightProperty().addListener((observable, oldValue, newValue) ->
-                sceneVisualizer.changeHeightFor(newValue.doubleValue() - oldValue.doubleValue()));
+                sceneController.changeHeightFor(oldValue, newValue));
 
         primaryStage.setOnCloseRequest(event -> simulate = false);
     }
@@ -188,7 +175,7 @@ public class Main extends Application {
                 universe.nextGeneration();
 
                 waitForDisplaying(() -> {
-                    sceneVisualizer.displayLife();
+                    sceneController.redrawScene();
                     displayStatistics();
                 });
 
@@ -221,7 +208,7 @@ public class Main extends Application {
 
     private void reset() {
         initialLife();
-        sceneVisualizer.displayLife();
+        sceneController.redrawScene();
         displayStatistics();
     }
 

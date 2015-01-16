@@ -21,9 +21,9 @@ public class SceneVisualizer {
     private Universe universe;
     private Group scene;
 
-    public SceneVisualizer(Universe universe) {
+    public SceneVisualizer(Universe universe, SceneScreenConverter sceneScreen) {
         this.universe = universe;
-        sceneScreen = new SceneScreenConverter(900, 600, 16);
+        this.sceneScreen = sceneScreen;
     }
 
     public Group buildScenePane() {

@@ -70,4 +70,9 @@ public class Universe implements thelife.engine.Universe {
     public void addLife(Point point) {
         space.setLifeAt(point);
     }
+
+    @Override
+    public void removeLife(Point point) {
+        space.removeLifeAt(point);
+    }
 }
