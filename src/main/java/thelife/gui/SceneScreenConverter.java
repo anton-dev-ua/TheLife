@@ -1,4 +1,4 @@
-package thelife;
+package thelife.gui;
 
 import thelife.engine.Point;
 

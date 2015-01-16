@@ -1,4 +1,4 @@
-package thelife;
+package thelife.gui;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;

@@ -1,4 +1,4 @@
-package thelife;
+package thelife.gui;
 
 public class FpsCalculator {
     private long startTime;

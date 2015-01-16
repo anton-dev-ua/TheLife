@@ -1,4 +1,4 @@
-package thelife;
+package thelife.gui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
