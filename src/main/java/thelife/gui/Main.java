@@ -10,6 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -62,6 +65,18 @@ public class Main extends Application {
         displayIterationDelay(5);
         sceneController.redrawScene();
         displayStatistics();
+
+        mainGrid.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            KeyCombination keyCombination = KeyCombination.valueOf("Shortcut+V");
+            if (keyCombination.match(event)) {
+                String content = Clipboard.getSystemClipboard().getString();
+
+                if (content != null) {
+                    sceneController.parseAndSetState(content);
+                }
+
+            }
+        });
 
         primaryStage.setScene(new Scene(mainGrid, background));
 
