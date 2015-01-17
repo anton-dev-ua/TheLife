@@ -13,6 +13,8 @@ public class SceneController {
     private final SceneScreenConverter sceneScreen;
     private double startX;
     private double startY;
+    private boolean removeLife;
+    private Point pointToChange;
 
 
     public SceneController(Universe universe) {
@@ -24,28 +26,8 @@ public class SceneController {
     public Group getScenePane() {
         Group pane = sceneVisualizer.buildScenePane();
 
-        pane.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.isPrimaryButtonDown()) {
-                double sx = event.getX();
-                double sy = event.getY();
-                int x = sceneScreen.toUniverseX(sx);
-                int y = sceneScreen.toUniverseY(sy);
-
-                Point point = new Point(x, y);
-                if (universe.getAllAliveCells().contains(point)) {
-                    universe.removeLife(point);
-                } else {
-                    universe.addLife(point);
-                }
-
-                sceneVisualizer.displayLife();
-            }
-        });
-
-
         pane.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             if (event.isSecondaryButtonDown()) {
-                System.out.println("sec button pressed");
                 startX = event.getX();
                 startY = event.getY();
             }
@@ -56,11 +38,13 @@ public class SceneController {
                 int x = sceneScreen.toUniverseX(sx);
                 int y = sceneScreen.toUniverseY(sy);
 
-                Point point = new Point(x, y);
-                if (universe.getAllAliveCells().contains(point)) {
-                    universe.removeLife(point);
+                pointToChange = new Point(x, y);
+                if (universe.getAllAliveCells().contains(pointToChange)) {
+                    universe.removeLife(pointToChange);
+                    removeLife = true;
                 } else {
-                    universe.addLife(point);
+                    universe.addLife(pointToChange);
+                    removeLife = false;
                 }
 
                 sceneVisualizer.displayLife();
@@ -78,6 +62,24 @@ public class SceneController {
                 sceneScreen.moveSceneCenterY(dy);
                 sceneScreen.rescale();
                 sceneVisualizer.redrawScene();
+            }
+
+            if (event.isPrimaryButtonDown()) {
+                double sx = event.getX();
+                double sy = event.getY();
+                int x = sceneScreen.toUniverseX(sx);
+                int y = sceneScreen.toUniverseY(sy);
+
+                Point point = new Point(x, y);
+                if(!pointToChange.equals(point)) {
+                    pointToChange = point;
+                    if (removeLife) {
+                        universe.removeLife(pointToChange);
+                    } else {
+                        universe.addLife(pointToChange);
+                    }
+                    sceneVisualizer.displayLife();
+                }
             }
         });
 

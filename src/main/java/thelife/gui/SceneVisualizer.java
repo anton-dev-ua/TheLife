@@ -1,5 +1,6 @@
 package thelife.gui;
 
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -39,7 +40,7 @@ public class SceneVisualizer {
 
     public void drawSceneGrid() {
 
-        Rectangle clip = new Rectangle(sceneScreen.getSceneWidth(),sceneScreen.getSceneHeight());
+        Rectangle clip = new Rectangle(sceneScreen.getSceneWidth(), sceneScreen.getSceneHeight());
         scene.setClip(clip);
 
         gridLines.getChildren().clear();
@@ -47,7 +48,7 @@ public class SceneVisualizer {
         sceneScreen.fieldColumns().filter(this::shouldShowGridLine).forEach(this::addHorizontalGridLine);
         sceneScreen.fieldRows().filter(this::shouldShowGridLine).forEach(this::addVerticalGridLine);
 
-        Rectangle rectangle = new Rectangle(0.5, 0.5, sceneScreen.getSceneWidth()-1, sceneScreen.getSceneHeight()-1);
+        Rectangle rectangle = new Rectangle(0.5, 0.5, sceneScreen.getSceneWidth() - 1, sceneScreen.getSceneHeight() - 1);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
 
@@ -114,12 +115,26 @@ public class SceneVisualizer {
         changeScale(sceneScreen.getScale() / 2);
     }
 
-    private void changeScale(double scale) {
-        sceneScreen.changeScale(scale);
-        redrawScene();
+    private void changeScale(double targetScale) {
+
+        new Thread(() -> {
+            double startScale = sceneScreen.getScale();
+            int stepCount = 10;
+            double dScale = (targetScale - startScale) / stepCount;
+            for (int step = 0; step < stepCount; step++) {
+                final double newScale = startScale + step * dScale;
+                sceneScreen.changeScale(newScale);
+                Platform.runLater(() -> redrawScene());
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            sceneScreen.changeScale(targetScale);
+            Platform.runLater(() -> redrawScene());
+        }).start();
+
     }
 
-    public SceneScreenConverter getSceneScreen() {
-        return sceneScreen;
-    }
 }
