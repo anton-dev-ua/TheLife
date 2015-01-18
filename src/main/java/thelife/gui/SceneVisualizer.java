@@ -1,11 +1,13 @@
 package thelife.gui;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import thelife.engine.Point;
 import thelife.engine.Universe;
 
@@ -21,6 +23,7 @@ public class SceneVisualizer {
     private Group gridLines;
     private Universe universe;
     private Group scene;
+    private Group sceneNumbers;
 
     public SceneVisualizer(Universe universe, SceneScreenConverter sceneScreen) {
         this.universe = universe;
@@ -30,9 +33,11 @@ public class SceneVisualizer {
     public Group buildScenePane() {
         sceneCells = new Group();
         gridLines = new Group();
+        sceneNumbers = new Group();
 
         scene = new Group();
-        scene.getChildren().addAll(sceneCells, gridLines);
+        scene.getChildren().addAll(sceneCells, gridLines, sceneNumbers);
+
 
         return scene;
     }
@@ -40,8 +45,8 @@ public class SceneVisualizer {
 
     public void drawSceneGrid() {
 
-        Rectangle clip = new Rectangle(sceneScreen.getSceneWidth(), sceneScreen.getSceneHeight());
-        scene.setClip(clip);
+//        Rectangle clip = new Rectangle(sceneScreen.getSceneWidth(), sceneScreen.getSceneHeight());
+//        scene.setClip(clip);
 
         gridLines.getChildren().clear();
 
@@ -52,11 +57,48 @@ public class SceneVisualizer {
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
 
+        sceneNumbers.getChildren().clear();
+
+        addSceneNumber("left", "" + (int) sceneScreen.getSceneLeft());
+        addSceneNumber("right", "" + (int) sceneScreen.getSceneRight());
+        addSceneNumber("top", "" + (int) sceneScreen.getSceneTop());
+        addSceneNumber("bottom", "" + (int) sceneScreen.getSceneBottom());
+
         gridLines.getChildren().add(rectangle);
     }
 
-    private boolean shouldShowGridLine(int y) {
-        return sceneScreen.getScale() >= 5 || y % 10 == 0;
+    private void addSceneNumber(String position, String text) {
+        Text left = new Text(text);
+        Bounds boundRect = left.getLayoutBounds();
+        double x = 0, y = 0;
+        switch (position) {
+            case "left":
+                x = 5;
+                y = sceneScreen.getSceneHeight() / 2 + boundRect.getHeight();
+                break;
+            case "right":
+                x = sceneScreen.getSceneWidth() - boundRect.getWidth() - 5;
+                y = sceneScreen.getSceneHeight() / 2 + boundRect.getHeight();
+                break;
+            case "top":
+                x = sceneScreen.getSceneWidth()/2 - boundRect.getWidth() / 2;
+                y = 5 + boundRect.getHeight();
+                break;
+            case "bottom":
+                x = sceneScreen.getSceneWidth()/2 - boundRect.getWidth() / 2;
+                y = sceneScreen.getSceneHeight() - 5;
+
+        }
+        left.setX(x);
+        left.setY(y);
+        left.setStroke(Color.BLACK);
+        left.setStrokeWidth(0.5);
+        left.setFill(Color.WHITE);
+        sceneNumbers.getChildren().add(left);
+    }
+
+    private boolean shouldShowGridLine(int index) {
+        return sceneScreen.getScale() >= 5 || index % 10 == 0 && sceneScreen.getScale() >= 2;
     }
 
     private void addHorizontalGridLine(int x) {
@@ -108,7 +150,7 @@ public class SceneVisualizer {
     }
 
     public void zoomIn() {
-       changeScale(sceneScreen.getScale() * 2);
+        changeScale(sceneScreen.getScale() * 2);
     }
 
     public void zoomOut() {

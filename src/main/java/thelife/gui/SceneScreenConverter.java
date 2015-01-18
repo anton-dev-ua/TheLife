@@ -67,7 +67,7 @@ public class SceneScreenConverter {
     }
 
     public IntStream fieldColumns() {
-        return IntStream.rangeClosed((int)Math.ceil(sceneLeft), (int) Math.ceil(sceneRight));
+        return IntStream.rangeClosed((int)Math.ceil(sceneLeft), (int) Math.floor(sceneRight));
     }
 
     public IntStream fieldRows() {
@@ -127,5 +127,21 @@ public class SceneScreenConverter {
 
     public void moveSceneCenterY(double sceneCenterY) {
         this.sceneCenterY += sceneCenterY;
+    }
+
+    public double getSceneLeft() {
+        return sceneLeft;
+    }
+
+    public double getSceneTop() {
+        return sceneTop;
+    }
+
+    public double getSceneRight() {
+        return sceneRight;
+    }
+
+    public double getSceneBottom() {
+        return sceneBottom;
     }
 }
