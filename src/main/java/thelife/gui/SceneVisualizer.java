@@ -3,6 +3,7 @@ package thelife.gui;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -24,6 +25,7 @@ public class SceneVisualizer {
     private Universe universe;
     private Group scene;
     private Group sceneNumbers;
+    private Group controlButtons;
 
     public SceneVisualizer(Universe universe, SceneScreenConverter sceneScreen) {
         this.universe = universe;
@@ -34,9 +36,22 @@ public class SceneVisualizer {
         sceneCells = new Group();
         gridLines = new Group();
         sceneNumbers = new Group();
+        controlButtons = new Group();
 
         scene = new Group();
-        scene.getChildren().addAll(sceneCells, gridLines, sceneNumbers);
+        scene.getChildren().addAll(sceneCells, gridLines, sceneNumbers, controlButtons);
+
+        Button button = new Button("");
+        button.getStylesheets().add(getClass().getResource("/button.css").toExternalForm());
+        button.setLayoutX(5);
+        button.setLayoutY(5);
+        button.setOnAction(event -> {
+            sceneScreen.setSceneCenterX(0);
+            sceneScreen.setSceneCenterY(0);
+            sceneScreen.rescale();
+            redrawScene();
+        });
+        controlButtons.getChildren().add(button);
 
 
         return scene;

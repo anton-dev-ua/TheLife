@@ -144,4 +144,12 @@ public class SceneScreenConverter {
     public double getSceneBottom() {
         return sceneBottom;
     }
+
+    public void setSceneCenterX(double sceneCenterX) {
+        this.sceneCenterX = sceneCenterX;
+    }
+
+    public void setSceneCenterY(double sceneCenterY) {
+        this.sceneCenterY = sceneCenterY;
+    }
 }
