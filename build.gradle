@@ -17,6 +17,7 @@ buildscript {
 apply plugin: 'me.champeau.gradle.jmh'
 
 dependencies {
+    compile 'org.apache.commons:commons-lang3:3.3.2'
     testCompile 'junit:junit:4.12'
     testCompile 'com.carrotsearch:junit-benchmarks:0.7.2'
     testCompile 'org.assertj:assertj-core:1.6.1'

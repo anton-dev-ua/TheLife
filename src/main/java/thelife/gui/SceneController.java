@@ -2,12 +2,12 @@ package thelife.gui;
 
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.StringUtils;
+import thelife.engine.LifParser;
 import thelife.engine.Point;
 import thelife.engine.Universe;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class SceneController {
 
@@ -112,27 +112,15 @@ public class SceneController {
     }
 
     void parseAndSetState(String content) {
-        content = content.toUpperCase().replaceAll("O|o","*");
-        if (content.contains(".") && content.contains("*")) {
-            Collection<Point> pointList = parseLif(content);
+        if (isLifFormat(content)) {
+            String lifString = content.toUpperCase().replaceAll("O|o", "*");
+            Collection<Point> pointList = new LifParser().parse(lifString);
             universe.setState(pointList);
             redrawScene();
         }
     }
 
-    private Collection<Point> parseLif(String content) {
-        Collection<Point> points = new HashSet<>();
-        int x = 0, y = 1;
-        for (String line : content.split("\n")) {
-            x = -1;
-            y--;
-            for (char c : line.trim().toCharArray()) {
-                x++;
-                if (c == '*') points.add(new Point(x, y));
-            }
-        }
-
-        Point deltaPoint = new Point(-x / 2, -y / 2);
-        return points.stream().map(point -> point.add(deltaPoint)).collect(Collectors.toSet());
+    private boolean isLifFormat(String content) {
+        return StringUtils.containsOnly(content.replaceAll("\\s", ""), '.', '*', 'O', 'o');
     }
 }
