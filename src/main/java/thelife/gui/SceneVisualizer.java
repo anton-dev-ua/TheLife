@@ -194,4 +194,7 @@ public class SceneVisualizer {
 
     }
 
+    public void setUniverse(Universe universe) {
+        this.universe = universe;
+    }
 }

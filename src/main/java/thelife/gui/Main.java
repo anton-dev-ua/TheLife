@@ -2,12 +2,15 @@ package thelife.gui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.Clipboard;
@@ -16,9 +19,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import thelife.engine.LifeAlgorithm;
 import thelife.engine.RleParser;
 import thelife.engine.UniverseFactory;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
 import static thelife.engine.LifeAlgorithm.TILE;
@@ -41,6 +47,7 @@ public class Main extends Application {
     private long iterationDelays[] = {2000, 1000, 500, 250, 100, 50, 10, 0};
     private Delayer delayer;
     private SceneController sceneController;
+    private LifeAlgorithm lifeAlgorithm = TILE;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -113,7 +120,30 @@ public class Main extends Application {
         addButton(topGroup, "Speed +", event -> displayIterationDelay(iterationDelayIndex + 1));
         addButton(topGroup, "Speed -", event -> displayIterationDelay(iterationDelayIndex - 1));
 
+        addSeparator(topGroup);
+
+        addAlgorithmsComboBox(topGroup);
+        
         return topGroup;
+    }
+
+    private void addAlgorithmsComboBox(GridPane topGroup) {
+        
+        topGroup.add(new Label("Algorithm:"),topGroup.getChildren().size(), 0);
+        
+        Collection<LifeAlgorithm> lifeAlgorithms = Arrays.asList(LifeAlgorithm.values());
+        ObservableList<LifeAlgorithm> options = FXCollections.observableArrayList(lifeAlgorithms);
+        ComboBox<LifeAlgorithm> comboBox = new ComboBox<>(options);
+        comboBox.setValue(lifeAlgorithm);
+        topGroup.add(comboBox, topGroup.getChildren().size(), 0);
+
+        comboBox.setOnAction(event -> {
+            System.out.println(comboBox.getValue());
+            lifeAlgorithm = comboBox.getValue();
+            initWorld();
+            sceneController.setUniverse(universe);
+            sceneController.redrawScene();
+        });
     }
 
     private void stopEmulation() {
@@ -209,10 +239,8 @@ public class Main extends Application {
     }
 
     private void initWorld() {
-        universe = new UniverseFactory().createUniverse(TILE);
-
+        universe = new UniverseFactory().createUniverse(lifeAlgorithm);
         initialLife();
-
     }
 
     private void initialLife() {

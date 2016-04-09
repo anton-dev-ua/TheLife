@@ -9,7 +9,7 @@ public class UniverseFactory {
             case POINT:
                 return new thelife.engine.point_centric.Universe();
             case CACHED_QUAD_TREE:
-                return new thelife.engine.hashlife.CachedQuadTreeUniverse();
+                return new thelife.engine.hashlife.Universe();
             case INCUBATION:
                 return new thelife.engine.incubation.CachedQuadTreeUniverse();
             case TILE_V2:

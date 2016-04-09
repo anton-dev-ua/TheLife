@@ -19,12 +19,17 @@ public class SceneController {
     private double startY;
     private boolean removeLife;
     private Point pointToChange;
-
-
+    
     public SceneController(Universe universe) {
         this.universe = universe;
         sceneScreen = new SceneScreenConverter(900, 600, 16);
         sceneVisualizer = new SceneVisualizer(universe, sceneScreen);
+    }
+
+
+    public void setUniverse(Universe universe) {
+        this.universe = universe;
+        sceneVisualizer.setUniverse(universe);
     }
 
     public Group getScenePane() {
