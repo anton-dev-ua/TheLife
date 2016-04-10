@@ -155,32 +155,32 @@ public class Block {
         return block;
     }
 
-    public Block setLifeAt(int x, int y) {
+    public Block setLifeAt(int x, int y, boolean isAlive) {
 
         if (level == 1) {
             if (x < 0) {
                 if (y < 0)
-                    return createBlock(level, topLeft, topRight, createBlock(true), bottomRight);
+                    return createBlock(level, topLeft, topRight, createBlock(isAlive), bottomRight);
                 else
-                    return createBlock(level, createBlock(true), topRight, bottomLeft, bottomRight);
+                    return createBlock(level, createBlock(isAlive), topRight, bottomLeft, bottomRight);
             } else {
                 if (y < 0)
-                    return createBlock(level, topLeft, topRight, bottomLeft, createBlock(true));
+                    return createBlock(level, topLeft, topRight, bottomLeft, createBlock(isAlive));
                 else
-                    return createBlock(level, topLeft, createBlock(true), bottomLeft, bottomRight);
+                    return createBlock(level, topLeft, createBlock(isAlive), bottomLeft, bottomRight);
             }
         } else {
             int offset = 1 << (level - 2);
             if (x < 0) {
                 if (y < 0)
-                    return createBlock(level, topLeft, topRight, bottomLeft.setLifeAt(x + offset, y + offset), bottomRight);
+                    return createBlock(level, topLeft, topRight, bottomLeft.setLifeAt(x + offset, y + offset, isAlive), bottomRight);
                 else
-                    return createBlock(level, topLeft.setLifeAt(x + offset, y - offset), topRight, bottomLeft, bottomRight);
+                    return createBlock(level, topLeft.setLifeAt(x + offset, y - offset, isAlive), topRight, bottomLeft, bottomRight);
             } else {
                 if (y < 0)
-                    return createBlock(level, topLeft, topRight, bottomLeft, bottomRight.setLifeAt(x - offset, y + offset));
+                    return createBlock(level, topLeft, topRight, bottomLeft, bottomRight.setLifeAt(x - offset, y + offset, isAlive));
                 else
-                    return createBlock(level, topLeft, topRight.setLifeAt(x - offset, y - offset), bottomLeft, bottomRight);
+                    return createBlock(level, topLeft, topRight.setLifeAt(x - offset, y - offset, isAlive), bottomLeft, bottomRight);
             }
         }
     }

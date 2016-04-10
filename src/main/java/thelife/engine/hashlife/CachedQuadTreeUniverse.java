@@ -63,14 +63,31 @@ public class CachedQuadTreeUniverse implements thelife.engine.Universe {
         }
 
         for (Point point : state) {
-            space = space.setLifeAt(point.getX(), point.getY());
+            space = space.setLifeAt(point.getX(), point.getY(), true);
         }
     }
-    
+
+    @Override
+    public void addLife(Point point) {
+        int max = max(abs(point.getX()), abs(point.getY()));
+        while (1 << (space.level - 1) < max) {
+            space = space.expand();
+        }
+        space = space.setLifeAt(point.getX(), point.getY(), true);
+    }
+
+    @Override
+    public void removeLife(Point point) {
+        int max = max(abs(point.getX()), abs(point.getY()));
+        if (1 << (space.level - 1) >= max) {
+            space = space.setLifeAt(point.getX(), point.getY(), false);
+        }
+    }
+
     public int getLevel() {
         return space.level;
     }
-    
+
     public int getPopulation() {
         return space.getPopulation();
     }

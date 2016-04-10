@@ -26,7 +26,9 @@ import thelife.engine.UniverseFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
+import static thelife.engine.LifeAlgorithm.INCUBATION;
 import static thelife.engine.LifeAlgorithm.TILE;
 
 public class Main extends Application {
@@ -127,11 +129,11 @@ public class Main extends Application {
         return topGroup;
     }
 
-    private void addAlgorithmsComboBox(GridPane topGroup) {
+    private void addAlgorithmsComboBox(GridPane topGroup) {                                                                                       
         
         topGroup.add(new Label("Algorithm:"),topGroup.getChildren().size(), 0);
         
-        Collection<LifeAlgorithm> lifeAlgorithms = Arrays.asList(LifeAlgorithm.values());
+        Collection<LifeAlgorithm> lifeAlgorithms = Arrays.stream(LifeAlgorithm.values()).filter(it -> it != INCUBATION).collect(Collectors.toList());
         ObservableList<LifeAlgorithm> options = FXCollections.observableArrayList(lifeAlgorithms);
         ComboBox<LifeAlgorithm> comboBox = new ComboBox<>(options);
         comboBox.setValue(lifeAlgorithm);

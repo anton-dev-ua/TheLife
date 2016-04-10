@@ -1,5 +1,6 @@
 package thelife.engine.incubation;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import thelife.engine.Point;
 
 import java.math.BigInteger;
@@ -66,5 +67,15 @@ public class CachedQuadTreeUniverse implements thelife.engine.Universe {
         for (Point point : state) {
             space = space.setLifeAt(point.getX(), point.getY());
         }
+    }
+
+    @Override
+    public void addLife(Point point) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void removeLife(Point point) {
+        throw new NotImplementedException();
     }
 }

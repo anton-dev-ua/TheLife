@@ -1,7 +1,5 @@
 package thelife.engine;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.math.BigInteger;
 import java.util.Collection;
 
@@ -16,11 +14,7 @@ public interface Universe {
 
     void setState(Collection<Point> points);
 
-    default void addLife(Point point) {
-        throw new NotImplementedException();
-    }
+    void addLife(Point point);
 
-    default void removeLife(Point point) {
-        throw new NotImplementedException();
-    }
+    void removeLife(Point point);
 }
