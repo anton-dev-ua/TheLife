@@ -14,7 +14,7 @@ import static thelife.engine.testsupport.TstUtils.expectedGenerations;
 public class UniverseSmokeTest {
 
     private RleParser rleParser = new RleParser();
-    
+
     @Before
     public void before() {
         Block.cleanInternalCache();
@@ -42,17 +42,17 @@ public class UniverseSmokeTest {
         while (universe.getGeneration().longValue() < generations.size()) {
             universe.nextGeneration();
 //            if(i%1000 == 0) System.out.println("done "+i);
-            System.out.printf("%s, ",universe.getGeneration());
+            System.out.printf("%s, ", universe.getGeneration());
 
-            int gen = (int)universe.getGeneration().longValue();
+            int gen = (int) universe.getGeneration().longValue();
 //                System.out.println(gen + ", " + new RleFormatter().format(universe.getAllAliveCells()));
-                if (gen < generations.size()) {
-                    Collection<Point> allAliveCells = universe.getAllAliveCells();
-                    assertThat(allAliveCells)
-                            .as("generation " + gen)
-                            .hasSameSizeAs(generations.get(gen - 1))
-                            .containsAll(generations.get(gen - 1));
-                }
+            if (gen < generations.size()) {
+                Collection<Point> allAliveCells = universe.getAllAliveCells();
+                assertThat(allAliveCells)
+                        .as("generation " + gen)
+                        .containsAll(generations.get(gen - 1))
+                        .hasSameSizeAs(generations.get(gen - 1));
+            }
         }
         System.out.println("\ngenerations:   " + universe.getGeneration());
         System.out.println("cache size:    " + Block.getInternalCacheSize());

@@ -105,7 +105,7 @@ public class BlockTest {
 
         Block nextGen = space.nextGen();
 
-        assertThat(nextGen.getAllAliveCells(0, 0, new HashSet<>())).hasSize(3).contains(new Point(0, 2), new Point(1, 2), new Point(2, 2));
+        assertThat(nextGen.getAllAliveCells()).hasSize(3).contains(new Point(0, 2), new Point(1, 2), new Point(2, 2));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class BlockTest {
         expected.add(new Point(-1, -2));
 
 
-        assertThat(space.getAllAliveCells(0, 0, new HashSet<>())).hasSameSizeAs(expected).containsAll(expected);
+        assertThat(space.getAllAliveCells()).hasSameSizeAs(expected).containsAll(expected);
 
     }
 

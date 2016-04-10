@@ -4,7 +4,9 @@ import thelife.engine.Point;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Block {
 
@@ -15,6 +17,7 @@ public class Block {
     private boolean alive = false;
     int population = 0;
     private Block cachedResult;
+    private Collection<Point> cachedPoints;
 
     Block(int aLevel) {
         level = aLevel;
@@ -182,27 +185,38 @@ public class Block {
         }
     }
 
-    public Collection<Point> getAllAliveCells(int xOffset, int yOffset, Collection<Point> points) {
+    public Collection<Point> getAllAliveCells() {
 
-        if (level == 1) {
+        if (cachedPoints == null) {
 
-            if (topLeft.population == 1) points.add(new Point(xOffset - 1, yOffset));
-            if (topRight.population == 1) points.add(new Point(xOffset, yOffset));
-            if (bottomLeft.population == 1) points.add(new Point(xOffset - 1, yOffset - 1));
-            if (bottomRight.population == 1) points.add(new Point(xOffset, yOffset - 1));
+            cachedPoints = new HashSet<>();
 
-            return points;
+            if (level == 1) {
 
+                if (topLeft.population == 1) cachedPoints.add(new Point(0 - 1, 0));
+                if (topRight.population == 1) cachedPoints.add(new Point(0, 0));
+                if (bottomLeft.population == 1) cachedPoints.add(new Point(0 - 1, 0 - 1));
+                if (bottomRight.population == 1) cachedPoints.add(new Point(0, 0 - 1));
+
+            } else {
+
+                int offset = 1 << (level - 2);
+
+                cachedPoints.addAll(transform(topLeft.getAllAliveCells(), -offset, +offset));
+                cachedPoints.addAll(transform(topRight.getAllAliveCells(), +offset, +offset));
+                cachedPoints.addAll(transform(bottomLeft.getAllAliveCells(), -offset, -offset));
+                cachedPoints.addAll(transform(bottomRight.getAllAliveCells(), +offset, -offset));
+            }
         }
 
-        int offset = 1 << (level - 2);
+        return cachedPoints;
+    }
 
-        topLeft.getAllAliveCells(xOffset - offset, yOffset + offset, points);
-        topRight.getAllAliveCells(xOffset + offset, yOffset + offset, points);
-        bottomLeft.getAllAliveCells(xOffset - offset, yOffset - offset, points);
-        bottomRight.getAllAliveCells(xOffset + offset, yOffset - offset, points);
-
-        return points;
+    private Collection<? extends Point> transform(Collection<Point> cells, int xOffset, int yOffset) {
+        Point offset = new Point(xOffset, yOffset);
+        return cells.stream()
+                .map(point -> point.add(offset))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     public Block expand() {
@@ -215,7 +229,6 @@ public class Block {
     }
 
     public Block intern() {
-//        return this;
         Block intern = internCache.get(this);
         if (intern == null) {
             intern = this;
@@ -258,12 +271,16 @@ public class Block {
                 "p=" + population +
                 '}';
     }
-    
+
     public static void cleanInternalCache() {
         internCache.clear();
     }
 
     public static int getInternalCacheSize() {
         return internCache.size();
+    }
+
+    public int getPopulation() {
+        return population;
     }
 }

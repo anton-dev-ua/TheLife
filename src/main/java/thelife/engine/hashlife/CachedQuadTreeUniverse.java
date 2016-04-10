@@ -4,7 +4,6 @@ import thelife.engine.Point;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.HashSet;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -52,7 +51,7 @@ public class CachedQuadTreeUniverse implements thelife.engine.Universe {
 
     @Override
     public Collection<Point> getAllAliveCells() {
-        return space.getAllAliveCells(0, 0, new HashSet<>());
+        return space.getAllAliveCells();
     }
 
     @Override
@@ -66,5 +65,13 @@ public class CachedQuadTreeUniverse implements thelife.engine.Universe {
         for (Point point : state) {
             space = space.setLifeAt(point.getX(), point.getY());
         }
+    }
+    
+    public int getLevel() {
+        return space.level;
+    }
+    
+    public int getPopulation() {
+        return space.getPopulation();
     }
 }
