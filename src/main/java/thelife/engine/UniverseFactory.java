@@ -7,7 +7,7 @@ public class UniverseFactory {
             case TILE:
                 return new thelife.engine.tile.Universe();
             case POINT:
-                return new thelife.engine.point_centric.Universe();
+                return new thelife.engine.point.Universe();
             case CACHED_QUAD_TREE:
                 return new thelife.engine.hashlife.Universe();
             case INCUBATION:

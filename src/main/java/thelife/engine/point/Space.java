@@ -1,4 +1,4 @@
-package thelife.engine.point_centric;
+package thelife.engine.point;
 
 import thelife.engine.Point;
 
