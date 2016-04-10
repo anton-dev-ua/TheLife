@@ -1,6 +1,7 @@
 package thelife.engine.hashlife;
 
 
+import org.junit.Before;
 import org.junit.Test;
 import thelife.engine.Point;
 
@@ -10,6 +11,11 @@ import java.util.HashSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BlockTest {
+    
+    @Before
+    public void before() {
+//        Block.cleanInternalCache();
+    }
 
     @Test
     public void createsEmptySpace() throws Exception {
@@ -113,7 +119,7 @@ public class BlockTest {
                 .setLifeAt(-3, -1)
                 .setLifeAt(-1, -2);
 
-        Block nextGen = space.nextGen();
+        Block nextGen = space.expand().nextGen();
 
         assertThat(nextGen.topLeft.bottomLeft.population).isEqualTo(1);
         assertThat(nextGen.topRight.topRight.population).isEqualTo(1);

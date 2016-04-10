@@ -16,11 +16,11 @@ public class UniverseTest {
 
     @Before
     public void setUp() throws Exception {
+        Block.cleanInternalCache();
         initialState = new HashSet<>();
         initialState.add(new Point(1, 1));
         initialState.add(new Point(1, 2));
         initialState.add(new Point(1, 3));
-
     }
 
     @Test

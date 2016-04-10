@@ -113,7 +113,7 @@ public class BlockTest {
                 .setLifeAt(-3, -1)
                 .setLifeAt(-1, -2);
 
-        Block nextGen = space.nextGen();
+        Block nextGen = space.expand().nextGen();
 
         assertThat(nextGen.topLeft.bottomLeft.population).isEqualTo(1);
         assertThat(nextGen.topRight.topRight.population).isEqualTo(1);

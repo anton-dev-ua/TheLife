@@ -215,6 +215,7 @@ public class Block {
     }
 
     public Block intern() {
+//        return this;
         Block intern = internCache.get(this);
         if (intern == null) {
             intern = this;
@@ -256,6 +257,10 @@ public class Block {
         return "{" +
                 "p=" + population +
                 '}';
+    }
+    
+    public static void cleanInternalCache() {
+        internCache.clear();
     }
 
     public static int getInternalCacheSize() {
