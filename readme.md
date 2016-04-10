@@ -10,11 +10,11 @@ Implemented algorithms:
    
     Quite simple algorithm. Just set of points with alive cells. 
     On each iteration neighbors of every alive cell is checked if 
-    cell should born or die there.
+    cell should be born or die there.
 
 * TILE
 
-    Filed is represented as a set of "tiles". Tile holds information 
+    Field is represented as a set of "tiles". Tile holds information 
     if there is life in a center and number of alive neighbors.
     So in each iteration it can be decided if cell in the center 
     should born or die just by checking number of alive neighbors.
