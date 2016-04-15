@@ -35,6 +35,6 @@ Implemented algorithms:
     [Explanation of the algorithm](http://www.drdobbs.com/jvm/an-algorithm-for-compressing-space-and-t/184406478).
     
 
-![](img/main-window.png)
+![](img/main-window.jpg)
 
 
